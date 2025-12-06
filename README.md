@@ -1,26 +1,34 @@
 # Tomodachi (Frontend)
 
-React + Next.js + TypeScript + Tailwind UI for the Tomodachi learning app (Beginner kana + N5). Includes onboarding/profile, track boards, quizzes, and a lightweight SRS/flashcard loop.
+Tomodachi adalah aplikasi belajar bahasa Jepang yang ringan dan fokus pada beginner (kana) dan N5. Antarmuka ini dibangun dengan Next.js + React + TypeScript + Tailwind, menghadirkan onboarding, board materi, latihan kuis, dan sesi flashcard SRS untuk membantu progres harian.
+
+## Fitur Utama
+- **Onboarding & Profil**: set nama, pilih jalur (Beginner/N5), fokus skill, dan target harian; ringkasan profil menampilkan progres dasar.
+- **Track Board**: kartu unit per jalur (Beginner kana atau N5) untuk orientasi materi yang sedang aktif.
+- **Latihan Inti**: kuis pilihan ganda 10 soal acak sesuai jalur; mendukung tipe matching/typing/ordering/reading/listening.
+- **Latihan Kanji**: mode khusus menebak bacaan hiragana + arti Indonesia untuk kanji N5 (soal acak dari `src/assets/kanji_n5.json`), 10 soal multiple choice.
+- **Navigasi Praktis**: tombol kembali ke beranda dengan konfirmasi agar tidak kehilangan jawaban.
+- **SRS Flashcard**: loop review simple (again/good/easy) untuk mengulang kana, vocab, atau kanji.
+- **Desain Responsif**: layout Tailwind yang nyaman untuk desktop maupun mobile.
 
 ## Prasyarat
 - Node.js 18+ (disarankan 20+)
-- npm (bawaan Node) atau yarn/pnpm jika ingin
+- npm (bawaan Node) atau yarn/pnpm jika diinginkan
 
-## Jalankan secara lokal
+## Cara Menjalankan
 ```bash
 npm install
 npm run dev
 ```
-Akses di http://localhost:3000.
+Buka http://localhost:3000.
 
-## Perintah lainnya
+## Perintah Lain
 - `npm run build` — build produksi.
-- `npm start` — menjalankan build produksi.
+- `npm start` — menjalankan hasil build produksi.
 - `npm run lint` — pengecekan linting.
 
-## Catatan fitur
-- Jalur Beginner (hiragana/katakana) dan N5 dengan kuis contoh.
-- Onboarding: pilih jalur, fokus skill, target harian.
-- SRS ringan + flashcard (kana → vocab/kanji) dengan opsi grade again/good/easy.
-- Audio: mencoba Speech Synthesis (JA) di browser; fallback nada sederhana. Ganti dengan audio asli di `/public` saat tersedia.
-# tomodachi
+## Struktur & Catatan
+- **Latihan**: `src/app/practice/page.tsx` mengatur mode Beginner/N5/Kanji dan skor hasil.
+- **Bank Kanji**: `src/assets/kanji_n5.json` menjadi sumber soal kanji (hiragana + arti).
+- **Komponen UI**: `src/components/ui/*` (button, badge, card, progress) dan ilustrasi `src/components/illustrations`.
+- **Konfigurasi**: Next.js standar dengan Tailwind; lihat `package.json` untuk skrip.
