@@ -1,0 +1,569 @@
+[
+  {
+    "hiragana": "あ",
+    "romaji": "a",
+    "type": "gojuon",
+    "row": "a",
+    "column": "a"
+  },
+  {
+    "hiragana": "い",
+    "romaji": "i",
+    "type": "gojuon",
+    "row": "a",
+    "column": "i"
+  },
+  {
+    "hiragana": "う",
+    "romaji": "u",
+    "type": "gojuon",
+    "row": "a",
+    "column": "u"
+  },
+  {
+    "hiragana": "え",
+    "romaji": "e",
+    "type": "gojuon",
+    "row": "a",
+    "column": "e"
+  },
+  {
+    "hiragana": "お",
+    "romaji": "o",
+    "type": "gojuon",
+    "row": "a",
+    "column": "o"
+  },
+  {
+    "hiragana": "か",
+    "romaji": "ka",
+    "type": "gojuon",
+    "row": "ka",
+    "column": "a"
+  },
+  {
+    "hiragana": "き",
+    "romaji": "ki",
+    "type": "gojuon",
+    "row": "ka",
+    "column": "i"
+  },
+  {
+    "hiragana": "く",
+    "romaji": "ku",
+    "type": "gojuon",
+    "row": "ka",
+    "column": "u"
+  },
+  {
+    "hiragana": "け",
+    "romaji": "ke",
+    "type": "gojuon",
+    "row": "ka",
+    "column": "e"
+  },
+  {
+    "hiragana": "こ",
+    "romaji": "ko",
+    "type": "gojuon",
+    "row": "ka",
+    "column": "o"
+  },
+  {
+    "hiragana": "さ",
+    "romaji": "sa",
+    "type": "gojuon",
+    "row": "sa",
+    "column": "a"
+  },
+  {
+    "hiragana": "し",
+    "romaji": "shi",
+    "type": "gojuon",
+    "row": "sa",
+    "column": "i"
+  },
+  {
+    "hiragana": "す",
+    "romaji": "su",
+    "type": "gojuon",
+    "row": "sa",
+    "column": "u"
+  },
+  {
+    "hiragana": "せ",
+    "romaji": "se",
+    "type": "gojuon",
+    "row": "sa",
+    "column": "e"
+  },
+  {
+    "hiragana": "そ",
+    "romaji": "so",
+    "type": "gojuon",
+    "row": "sa",
+    "column": "o"
+  },
+  {
+    "hiragana": "た",
+    "romaji": "ta",
+    "type": "gojuon",
+    "row": "ta",
+    "column": "a"
+  },
+  {
+    "hiragana": "ち",
+    "romaji": "chi",
+    "type": "gojuon",
+    "row": "ta",
+    "column": "i"
+  },
+  {
+    "hiragana": "つ",
+    "romaji": "tsu",
+    "type": "gojuon",
+    "row": "ta",
+    "column": "u"
+  },
+  {
+    "hiragana": "て",
+    "romaji": "te",
+    "type": "gojuon",
+    "row": "ta",
+    "column": "e"
+  },
+  {
+    "hiragana": "と",
+    "romaji": "to",
+    "type": "gojuon",
+    "row": "ta",
+    "column": "o"
+  },
+  {
+    "hiragana": "な",
+    "romaji": "na",
+    "type": "gojuon",
+    "row": "na",
+    "column": "a"
+  },
+  {
+    "hiragana": "に",
+    "romaji": "ni",
+    "type": "gojuon",
+    "row": "na",
+    "column": "i"
+  },
+  {
+    "hiragana": "ぬ",
+    "romaji": "nu",
+    "type": "gojuon",
+    "row": "na",
+    "column": "u"
+  },
+  {
+    "hiragana": "ね",
+    "romaji": "ne",
+    "type": "gojuon",
+    "row": "na",
+    "column": "e"
+  },
+  {
+    "hiragana": "の",
+    "romaji": "no",
+    "type": "gojuon",
+    "row": "na",
+    "column": "o"
+  },
+  {
+    "hiragana": "は",
+    "romaji": "ha",
+    "type": "gojuon",
+    "row": "ha",
+    "column": "a"
+  },
+  {
+    "hiragana": "ひ",
+    "romaji": "hi",
+    "type": "gojuon",
+    "row": "ha",
+    "column": "i"
+  },
+  {
+    "hiragana": "ふ",
+    "romaji": "fu",
+    "type": "gojuon",
+    "row": "ha",
+    "column": "u"
+  },
+  {
+    "hiragana": "へ",
+    "romaji": "he",
+    "type": "gojuon",
+    "row": "ha",
+    "column": "e"
+  },
+  {
+    "hiragana": "ほ",
+    "romaji": "ho",
+    "type": "gojuon",
+    "row": "ha",
+    "column": "o"
+  },
+  {
+    "hiragana": "ま",
+    "romaji": "ma",
+    "type": "gojuon",
+    "row": "ma",
+    "column": "a"
+  },
+  {
+    "hiragana": "み",
+    "romaji": "mi",
+    "type": "gojuon",
+    "row": "ma",
+    "column": "i"
+  },
+  {
+    "hiragana": "む",
+    "romaji": "mu",
+    "type": "gojuon",
+    "row": "ma",
+    "column": "u"
+  },
+  {
+    "hiragana": "め",
+    "romaji": "me",
+    "type": "gojuon",
+    "row": "ma",
+    "column": "e"
+  },
+  {
+    "hiragana": "も",
+    "romaji": "mo",
+    "type": "gojuon",
+    "row": "ma",
+    "column": "o"
+  },
+  {
+    "hiragana": "や",
+    "romaji": "ya",
+    "type": "gojuon",
+    "row": "ya",
+    "column": "a"
+  },
+  {
+    "hiragana": "ゆ",
+    "romaji": "yu",
+    "type": "gojuon",
+    "row": "ya",
+    "column": "u"
+  },
+  {
+    "hiragana": "よ",
+    "romaji": "yo",
+    "type": "gojuon",
+    "row": "ya",
+    "column": "o"
+  },
+  {
+    "hiragana": "ら",
+    "romaji": "ra",
+    "type": "gojuon",
+    "row": "ra",
+    "column": "a"
+  },
+  {
+    "hiragana": "り",
+    "romaji": "ri",
+    "type": "gojuon",
+    "row": "ra",
+    "column": "i"
+  },
+  {
+    "hiragana": "る",
+    "romaji": "ru",
+    "type": "gojuon",
+    "row": "ra",
+    "column": "u"
+  },
+  {
+    "hiragana": "れ",
+    "romaji": "re",
+    "type": "gojuon",
+    "row": "ra",
+    "column": "e"
+  },
+  {
+    "hiragana": "ろ",
+    "romaji": "ro",
+    "type": "gojuon",
+    "row": "ra",
+    "column": "o"
+  },
+  {
+    "hiragana": "わ",
+    "romaji": "wa",
+    "type": "gojuon",
+    "row": "wa",
+    "column": "a"
+  },
+  {
+    "hiragana": "を",
+    "romaji": "wo",
+    "type": "gojuon",
+    "row": "wa",
+    "column": "o"
+  },
+  {
+    "hiragana": "ん",
+    "romaji": "n",
+    "type": "gojuon",
+    "row": "n",
+    "column": null
+  },
+  {
+    "hiragana": "が",
+    "romaji": "ga",
+    "type": "dakuten",
+    "row": "ga",
+    "column": "a"
+  },
+  {
+    "hiragana": "ぎ",
+    "romaji": "gi",
+    "type": "dakuten",
+    "row": "ga",
+    "column": "i"
+  },
+  {
+    "hiragana": "ぐ",
+    "romaji": "gu",
+    "type": "dakuten",
+    "row": "ga",
+    "column": "u"
+  },
+  {
+    "hiragana": "げ",
+    "romaji": "ge",
+    "type": "dakuten",
+    "row": "ga",
+    "column": "e"
+  },
+  {
+    "hiragana": "ご",
+    "romaji": "go",
+    "type": "dakuten",
+    "row": "ga",
+    "column": "o"
+  },
+  {
+    "hiragana": "ざ",
+    "romaji": "za",
+    "type": "dakuten",
+    "row": "za",
+    "column": "a"
+  },
+  {
+    "hiragana": "じ",
+    "romaji": "ji",
+    "type": "dakuten",
+    "row": "za",
+    "column": "i"
+  },
+  {
+    "hiragana": "ず",
+    "romaji": "zu",
+    "type": "dakuten",
+    "row": "za",
+    "column": "u"
+  },
+  {
+    "hiragana": "ぜ",
+    "romaji": "ze",
+    "type": "dakuten",
+    "row": "za",
+    "column": "e"
+  },
+  {
+    "hiragana": "ぞ",
+    "romaji": "zo",
+    "type": "dakuten",
+    "row": "za",
+    "column": "o"
+  },
+  {
+    "hiragana": "だ",
+    "romaji": "da",
+    "type": "dakuten",
+    "row": "da",
+    "column": "a"
+  },
+  {
+    "hiragana": "ぢ",
+    "romaji": "ji",
+    "type": "dakuten",
+    "row": "da",
+    "column": "i"
+  },
+  {
+    "hiragana": "づ",
+    "romaji": "zu",
+    "type": "dakuten",
+    "row": "da",
+    "column": "u"
+  },
+  {
+    "hiragana": "で",
+    "romaji": "de",
+    "type": "dakuten",
+    "row": "da",
+    "column": "e"
+  },
+  {
+    "hiragana": "ど",
+    "romaji": "do",
+    "type": "dakuten",
+    "row": "da",
+    "column": "o"
+  },
+  {
+    "hiragana": "ば",
+    "romaji": "ba",
+    "type": "dakuten",
+    "row": "ba",
+    "column": "a"
+  },
+  {
+    "hiragana": "び",
+    "romaji": "bi",
+    "type": "dakuten",
+    "row": "ba",
+    "column": "i"
+  },
+  {
+    "hiragana": "ぶ",
+    "romaji": "bu",
+    "type": "dakuten",
+    "row": "ba",
+    "column": "u"
+  },
+  {
+    "hiragana": "べ",
+    "romaji": "be",
+    "type": "dakuten",
+    "row": "ba",
+    "column": "e"
+  },
+  {
+    "hiragana": "ぼ",
+    "romaji": "bo",
+    "type": "dakuten",
+    "row": "ba",
+    "column": "o"
+  },
+  {
+    "hiragana": "ぱ",
+    "romaji": "pa",
+    "type": "handakuten",
+    "row": "pa",
+    "column": "a"
+  },
+  {
+    "hiragana": "ぴ",
+    "romaji": "pi",
+    "type": "handakuten",
+    "row": "pa",
+    "column": "i"
+  },
+  {
+    "hiragana": "ぷ",
+    "romaji": "pu",
+    "type": "handakuten",
+    "row": "pa",
+    "column": "u"
+  },
+  {
+    "hiragana": "ぺ",
+    "romaji": "pe",
+    "type": "handakuten",
+    "row": "pa",
+    "column": "e"
+  },
+  {
+    "hiragana": "ぽ",
+    "romaji": "po",
+    "type": "handakuten",
+    "row": "pa",
+    "column": "o"
+  },
+  {
+    "hiragana": "ぁ",
+    "romaji": "a",
+    "type": "small",
+    "row": "a",
+    "column": "a"
+  },
+  {
+    "hiragana": "ぃ",
+    "romaji": "i",
+    "type": "small",
+    "row": "a",
+    "column": "i"
+  },
+  {
+    "hiragana": "ぅ",
+    "romaji": "u",
+    "type": "small",
+    "row": "a",
+    "column": "u"
+  },
+  {
+    "hiragana": "ぇ",
+    "romaji": "e",
+    "type": "small",
+    "row": "a",
+    "column": "e"
+  },
+  {
+    "hiragana": "ぉ",
+    "romaji": "o",
+    "type": "small",
+    "row": "a",
+    "column": "o"
+  },
+  {
+    "hiragana": "ゃ",
+    "romaji": "ya",
+    "type": "small",
+    "row": "ya",
+    "column": "a"
+  },
+  {
+    "hiragana": "ゅ",
+    "romaji": "yu",
+    "type": "small",
+    "row": "ya",
+    "column": "u"
+  },
+  {
+    "hiragana": "ょ",
+    "romaji": "yo",
+    "type": "small",
+    "row": "ya",
+    "column": "o"
+  },
+  {
+    "hiragana": "ゎ",
+    "romaji": "wa",
+    "type": "small",
+    "row": "wa",
+    "column": "a"
+  },
+  {
+    "hiragana": "っ",
+    "romaji": "tsu",
+    "type": "small",
+    "row": "tsu",
+    "column": null
+  }
+]

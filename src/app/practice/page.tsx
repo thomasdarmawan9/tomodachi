@@ -7,7 +7,6 @@ import { useLearning } from "@/lib/learning-context";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import kanjiN5 from "@/assets/kanji_n5.json";
 
 type Question = {
   id: string;
@@ -58,8 +57,7 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-function buildKanjiQuestions(count = 10): Question[] {
-  const entries = kanjiN5 as KanjiEntry[];
+function buildKanjiQuestions(entries: KanjiEntry[], count = 10): Question[] {
   const choicePool = entries
     .flatMap((item) => item.kosakata?.map((kv) => `${kv.baca} · ${kv.arti}`) ?? [])
     .filter(Boolean);
@@ -98,22 +96,22 @@ function QuestionCard({
   const isKanjiQuestion = question.type === "kanji";
 
   return (
-    <Card className="space-y-4 border border-slate-100">
-      <div className="flex items-center justify-between gap-2">
+    <Card className="space-y-4 border border-slate-100 p-4 sm:p-5">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <p className="text-sm font-semibold text-slate-900">
             {index + 1}. {isKanjiQuestion ? "Pilih bacaan (hiragana) + arti untuk kanji berikut" : question.prompt}
           </p>
-          {isKanjiQuestion ? <p className="text-4xl font-bold leading-tight text-slate-900">{question.prompt}</p> : null}
+          {isKanjiQuestion ? <p className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">{question.prompt}</p> : null}
           <p className="text-xs text-slate-500 capitalize">{question.type}</p>
         </div>
-        <Badge tone="info">A-D</Badge>
+        <Badge tone="info" className="self-start">A-D</Badge>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {question.choices.map((choice, idx) => {
           const active = selected === choice;
           const base =
-            "flex items-center justify-center gap-2 rounded-xl border px-4 py-4 text-lg font-semibold transition text-center";
+            "flex items-center justify-between gap-2 rounded-xl border px-3 py-3 text-base font-semibold transition text-left sm:px-4 sm:py-4 sm:text-lg";
           return (
             <button
               key={choice}
@@ -139,16 +137,56 @@ export default function PracticePage() {
   const isBeginner = profile.track === "beginner";
   const router = useRouter();
 
+  const [kanjiData, setKanjiData] = useState<KanjiEntry[] | null>(null);
+  const [kanjiLoading, setKanjiLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isKanjiMode) return;
+    let cancelled = false;
+
+    const loadKanji = async () => {
+      setKanjiLoading(true);
+      try {
+        const cached = typeof window !== "undefined" ? localStorage.getItem("kanji_n5_cache_v1") : null;
+        if (cached) {
+          const parsed = JSON.parse(cached) as KanjiEntry[];
+          if (!cancelled) setKanjiData(parsed);
+          return;
+        }
+
+        const module = await import("@/assets/kanji_n5.json");
+        const data = (module.default ?? module) as KanjiEntry[];
+        if (!cancelled) {
+          setKanjiData(data);
+          localStorage.setItem("kanji_n5_cache_v1", JSON.stringify(data));
+        }
+      } catch (err) {
+        console.error("Gagal memuat kanji N5", err);
+      } finally {
+        if (!cancelled) setKanjiLoading(false);
+      }
+    };
+
+    loadKanji();
+    return () => {
+      cancelled = true;
+    };
+  }, [isKanjiMode]);
+
   const baseQuestions = useMemo(() => {
-    if (isKanjiMode) return buildKanjiQuestions(10);
+    if (isKanjiMode) {
+      if (!kanjiData) return [];
+      return buildKanjiQuestions(kanjiData, 10);
+    }
     return isBeginner ? beginnerQuestions : n5Questions;
-  }, [isBeginner, isKanjiMode]);
+  }, [isBeginner, isKanjiMode, kanjiData]);
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
+    if (!baseQuestions.length) return;
     setQuestions(shuffle(baseQuestions).slice(0, 10));
     setAnswers({});
     setCurrent(0);
@@ -161,6 +199,28 @@ export default function PracticePage() {
     if (!questions.length) return;
     const score = questions.reduce((acc, q) => acc + (answers[q.id] === q.answer ? 1 : 0), 0);
     const level = isKanjiMode ? "kanji" : isBeginner ? "beginner" : "n5";
+
+    const detailedAnswers = questions.map((q, idx) => {
+      const userAnswer = answers[q.id];
+      const prompt = q.type === "kanji" ? `Kanji ${q.prompt}` : q.prompt;
+      return {
+        id: q.id,
+        number: idx + 1,
+        prompt,
+        type: q.type,
+        selected: userAnswer,
+        correct: q.answer,
+        isCorrect: userAnswer === q.answer
+      };
+    });
+
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(
+        "last_result_detail",
+        JSON.stringify({ detail: detailedAnswers, level, total, score })
+      );
+    }
+
     router.push(`/result?score=${score}&total=${total}&level=${level}`);
   };
 
@@ -172,21 +232,22 @@ export default function PracticePage() {
 
   const activeQuestion = questions[current];
   const levelLabel = isKanjiMode ? "Kanji N5" : isBeginner ? "Beginner (Kana)" : "N5 Dasar";
+  const showKanjiLoading = isKanjiMode && (kanjiLoading || !kanjiData) && !questions.length;
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-5 px-4 py-6 md:py-10">
-      <header className="rounded-2xl bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 px-5 py-6 text-white shadow-card">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+    <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 md:gap-5 md:py-10">
+      <header className="rounded-2xl bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 px-4 py-5 text-white shadow-card sm:px-5 sm:py-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-wide text-white/80">Step 2 · {isKanjiMode ? "Latihan Kanji" : "Latihan Inti"}</p>
-            <h1 className="text-3xl font-bold">Latihan {levelLabel}</h1>
-            <p className="text-sm text-white/85">
+            <h1 className="text-2xl font-bold sm:text-3xl">Latihan {levelLabel}</h1>
+            <p className="text-sm leading-relaxed text-white/85">
               {isKanjiMode
                 ? "Mode kanji: tebak bacaan hiragana + arti bahasa Indonesia untuk tiap kanji. Soal diambil acak dari bank Kanji N5."
                 : "Mode latihan disesuaikan dengan jalur yang dipilih di onboarding. Ubah jalur di halaman utama jika perlu."}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2 md:self-start">
             <Badge tone="warning">{isKanjiMode ? "Kanji" : isBeginner ? "Beginner" : "N5"}</Badge>
             <Link href="/">
               <Button variant="ghost" className="text-white hover:bg-white/10">
@@ -195,7 +256,7 @@ export default function PracticePage() {
             </Link>
             <Button
               variant="outline"
-              className="border-white/40 text-white hover:bg-white/10 h-10 w-10 p-0"
+              className="h-10 w-10 border-white/40 p-0 text-white hover:bg-white/10"
               onClick={handleGoHome}
               aria-label="Kembali ke beranda"
             >
@@ -218,7 +279,7 @@ export default function PracticePage() {
       </header>
 
       <section className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold text-slate-800">
               Soal {current + 1}/{total} · pilihan A-D
@@ -230,6 +291,28 @@ export default function PracticePage() {
           <Badge tone="info">Level: {levelLabel}</Badge>
         </div>
 
+        {showKanjiLoading ? (
+          <Card className="flex flex-col items-center justify-center gap-3 border border-slate-100 p-6 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50">
+              <svg
+                className="h-5 w-5 animate-spin text-brand-600"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 12a9 9 0 1 1-6-8.485" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-800">Memuat bank kanji N5…</p>
+              <p className="text-xs text-slate-500">Disimpan di perangkat agar lebih cepat saat dibuka lagi.</p>
+            </div>
+          </Card>
+        ) : null}
+
         {activeQuestion ? (
           <div className="space-y-3">
             <QuestionCard
@@ -238,14 +321,14 @@ export default function PracticePage() {
               selected={answers[activeQuestion.id]}
               onSelect={(choice) => setAnswers((prev) => ({ ...prev, [activeQuestion.id]: choice }))}
             />
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <div className="flex flex-col gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-slate-700">
                 Terjawab: {answeredCount}/{total}
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
                 <Button
                   variant="outline"
-                  className="px-3"
+                  className="w-full px-3 sm:w-auto"
                   onClick={() => setCurrent((prev) => Math.max(0, prev - 1))}
                   disabled={current === 0}
                 >
@@ -254,7 +337,7 @@ export default function PracticePage() {
                 {current < total - 1 ? (
                   <Button
                     variant="primary"
-                    className="px-3"
+                    className="w-full px-3 sm:w-auto"
                     onClick={() => setCurrent((prev) => Math.min(total - 1, prev + 1))}
                   >
                     Berikutnya →
@@ -262,7 +345,7 @@ export default function PracticePage() {
                 ) : null}
                 <Button
                   variant="primary"
-                  className="px-4"
+                  className="w-full px-4 sm:w-auto"
                   onClick={handleSubmit}
                   disabled={answeredCount < total}
                 >

@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST="{\"app/practice/page.tsx -> @/assets/kanji_n5.json\":{\"id\":\"app/practice/page.tsx -> @/assets/kanji_n5.json\",\"files\":[\"static/chunks/_app-pages-browser_src_assets_kanji_n5_json.js\"]}}"

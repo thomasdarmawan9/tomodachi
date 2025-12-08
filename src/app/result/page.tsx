@@ -1,14 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
+type AnswerDetail = {
+  id: string;
+  number: number;
+  prompt: string;
+  type: string;
+  selected?: string;
+  correct: string;
+  isCorrect: boolean;
+};
+
 function ScoreDonut({ score, total }: { score: number; total: number }) {
-  const pct = Math.min(100, Math.round((score / total) * 100));
+  const safeTotal = total > 0 ? total : 1;
+  const pct = Math.min(100, Math.round((score / safeTotal) * 100));
   const gradient = `conic-gradient(#4ade80 ${pct * 3.6}deg, #e2e8f0 0deg)`;
   return (
     <div className="flex flex-col items-center gap-2">
@@ -38,10 +49,35 @@ export default function ResultPage() {
   const level = params.get("level") || "beginner";
   const passed = score >= 8;
 
+  const [details, setDetails] = useState<AnswerDetail[]>([]);
+  const [detailLoaded, setDetailLoaded] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = sessionStorage.getItem("last_result_detail");
+    if (!raw) {
+      setDetailLoaded(true);
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(raw) as { detail?: AnswerDetail[] };
+      if (Array.isArray(parsed?.detail)) {
+        setDetails(parsed.detail);
+      }
+    } catch (err) {
+      console.error("Gagal memuat detail jawaban", err);
+    } finally {
+      setDetailLoaded(true);
+    }
+  }, []);
+
   const statusText = useMemo(
     () => (passed ? "Lulus! Bisa lanjut" : "Belum lulus, coba lagi"),
     [passed]
   );
+
+  const incorrect = useMemo(() => details.filter((item) => !item.isCorrect), [details]);
 
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-5 px-4 py-6 md:py-10">
@@ -66,6 +102,11 @@ export default function ResultPage() {
             Level: {level === "beginner" ? "Beginner (Kana)" : "N5"} · Lulus jika 8/10 atau lebih.
           </p>
           <div className="flex flex-wrap gap-2">
+            <Link href="/">
+              <Button variant="ghost" className="px-4">
+                Ke Beranda
+              </Button>
+            </Link>
             <Link href="/practice">
               <Button variant="outline" className="px-4">
                 Coba lagi
@@ -84,6 +125,53 @@ export default function ResultPage() {
             )}
           </div>
         </div>
+      </Card>
+
+      <Card className="space-y-4 border border-slate-100 p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">Review Jawaban</p>
+            <p className="text-xs text-slate-500">Soal yang salah ditampilkan di bawah dengan kunci jawabannya.</p>
+          </div>
+          <Badge tone="info">{incorrect.length} Salah</Badge>
+        </div>
+
+        {!detailLoaded ? (
+          <p className="text-sm text-slate-600">Memuat detail jawaban…</p>
+        ) : incorrect.length ? (
+          <div className="space-y-3">
+            {incorrect.map((item) => (
+              <div
+                key={item.id}
+                className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="space-y-1">
+                    <p className="text-xs font-semibold text-amber-700">Soal {item.number}</p>
+                    <p className="text-sm font-bold text-slate-900">{item.prompt}</p>
+                    <p className="text-xs text-slate-500 capitalize">{item.type}</p>
+                  </div>
+                  <Badge tone="warning">Salah</Badge>
+                </div>
+                <div className="mt-2 space-y-1 text-sm">
+                  <p className="font-semibold text-amber-800">
+                    Jawabanmu: <span className="font-normal text-slate-800">{item.selected || "Kosong"}</span>
+                  </p>
+                  <p className="font-semibold text-slate-900">
+                    Seharusnya: <span className="font-normal text-slate-800">{item.correct}</span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : details.length ? (
+          <Card className="border-green-100 bg-green-50 px-4 py-3">
+            <p className="text-sm font-semibold text-green-700">Semua jawaban sudah benar 🎉</p>
+            <p className="text-xs text-green-800/80">Tidak ada soal yang perlu diperbaiki.</p>
+          </Card>
+        ) : (
+          <p className="text-sm text-slate-600">Belum ada detail jawaban. Selesaikan latihan untuk melihat review.</p>
+        )}
       </Card>
     </main>
   );

@@ -11,10 +11,11 @@ import { useLearning } from "@/lib/learning-context";
 import { ToriiIllustration } from "@/components/illustrations/Torii";
 
 export default function HomePage() {
-  const { onboardingComplete } = useLearning();
+  const { onboardingComplete, profile } = useLearning();
   const [levelTab, setLevelTab] = useState<
     "beginner" | "n5" | "n4" | "n3" | "n2" | "n1"
   >("beginner");
+  const isN5Track = profile.track === "n5";
 
   const tabs = useMemo(
     () => [
@@ -30,12 +31,12 @@ export default function HomePage() {
 
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 md:py-10">
-      <header className="rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 px-6 py-7 text-white shadow-card">
+      <header className="rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 px-5 py-6 text-white shadow-card sm:px-6 sm:py-7">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
             <p className="text-sm uppercase tracking-wide text-white/80">Tomodachi · Japanese Learning</p>
-            <h1 className="text-3xl font-bold">Halo, mari lanjutkan belajarmu</h1>
-            <p className="text-sm text-white/85">
+            <h1 className="text-2xl font-bold sm:text-3xl">Halo, mari lanjutkan belajarmu</h1>
+            <p className="text-sm leading-relaxed text-white/85">
               Beginner: fokus hiragana/katakana + audio + kuis. N5: vocab, grammar, kanji dengan latihan campuran dan SRS flashcard.
             </p>
             <div className="flex flex-wrap gap-2 text-xs">
@@ -43,7 +44,7 @@ export default function HomePage() {
               <span className="rounded-full bg-white/15 px-3 py-1 font-semibold">Target harian: atur menit & fokus skill</span>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-2 rounded-xl bg-white/10 p-4 text-sm backdrop-blur">
+          <div className="grid grid-cols-1 gap-2 rounded-xl bg-white/10 p-4 text-sm backdrop-blur sm:grid-cols-2">
             <div className="rounded-lg bg-white/15 px-3 py-3">
               <p className="text-xs text-white/80">Mulai cepat</p>
               <p className="text-lg font-semibold">Onboarding</p>
@@ -75,7 +76,7 @@ export default function HomePage() {
           <div className="card border border-slate-100 bg-white p-5 shadow-card">
             <div className="grid gap-4 md:grid-cols-[1.2fr,0.8fr] md:items-center">
               <div className="space-y-3">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
                     Step 2
                   </span>
@@ -90,11 +91,13 @@ export default function HomePage() {
                       Buka Latihan Inti
                     </Button>
                   </Link>
-                  <Link href="/practice?mode=kanji">
-                    <Button variant="outline" className="px-4">
-                      Latihan Kanji
-                    </Button>
-                  </Link>
+                  {isN5Track ? (
+                    <Link href="/practice?mode=kanji">
+                      <Button variant="outline" className="px-4">
+                        Latihan Kanji
+                      </Button>
+                    </Link>
+                  ) : null}
                   <Button variant="ghost" disabled className="px-4">
                     Audio & Pelafalan (soon)
                   </Button>
