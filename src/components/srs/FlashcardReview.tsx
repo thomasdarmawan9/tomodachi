@@ -1,30 +1,69 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useLearning } from "@/lib/learning-context";
+import { useEffect, useMemo, useState } from "react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
+import { Input } from "../ui/input";
+import { useAuth } from "@/lib/auth-context";
+import { createCustomFlashcard, fetchDueFlashcards, fetchSrsStats, gradeFlashcard } from "@/lib/srs-api";
+import { Flashcard } from "@/lib/types";
 
 export function FlashcardReview() {
-  const { flashcards, gradeCard } = useLearning();
+  const { token } = useAuth();
+  const [cards, setCards] = useState<Flashcard[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [reveal, setReveal] = useState(false);
+  const [stats, setStats] = useState<{ reviewedToday: number; totalCards: number; dueCards: number } | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [newCard, setNewCard] = useState({ prompt: "", answer: "", level: "beginner", type: "kana" as Flashcard["type"] });
+
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchDueFlashcards(token);
+        const stat = await fetchSrsStats(token);
+        if (!cancelled) {
+          setCards(data);
+          setStats(stat);
+        }
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Gagal memuat flashcard");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   const dueCards = useMemo(
     () =>
-      [...flashcards]
+      [...cards]
         .sort((a, b) => a.due - b.due)
         .filter((card) => card.due <= Date.now())
         .slice(0, 1),
-    [flashcards]
+    [cards]
   );
 
   const active = dueCards[0];
 
-  const handleGrade = (quality: "again" | "good" | "easy") => {
-    if (!active) return;
-    gradeCard(active.id, quality);
-    setReveal(false);
+  const handleGrade = async (quality: "again" | "good" | "easy") => {
+    if (!active || !token) return;
+    try {
+      await gradeFlashcard(active.id, quality, token);
+      setCards((prev) => prev.filter((c) => c.id !== active.id));
+      setReveal(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal mengirim penilaian");
+    }
   };
 
   return (
@@ -34,8 +73,25 @@ export function FlashcardReview() {
           <p className="section-title">SRS & Flashcard</p>
           <p className="muted">Mulai dari kana lalu vocab/kanji N5.</p>
         </div>
-        <Badge tone="info">{active ? "Siap Review" : "Semua up to date"}</Badge>
+        <Badge tone="info">
+          {loading ? "Memuat..." : active ? "Siap Review" : "Semua up to date"}
+        </Badge>
       </div>
+
+      {error ? (
+        <Card className="border border-amber-200 bg-amber-50 p-3">
+          <p className="text-sm font-semibold text-amber-800">Gagal memuat review</p>
+          <p className="text-xs text-amber-800/80">{error}</p>
+        </Card>
+      ) : null}
+
+      {stats ? (
+        <div className="grid grid-cols-1 gap-2 rounded-lg bg-slate-50 p-3 text-xs text-slate-700 sm:grid-cols-3">
+          <div>Total kartu: <span className="font-semibold">{stats.totalCards}</span></div>
+          <div>Due: <span className="font-semibold">{stats.dueCards}</span></div>
+          <div>Review hari ini: <span className="font-semibold">{stats.reviewedToday}</span></div>
+        </div>
+      ) : null}
 
       {active ? (
         <div className="space-y-4">
@@ -84,6 +140,71 @@ export function FlashcardReview() {
           Semua kartu telah direview. Tambahkan vocab baru atau lanjut jalur N5.
         </div>
       )}
+
+      <div className="rounded-xl border border-slate-100 bg-white p-4 space-y-2">
+        <p className="text-sm font-semibold text-slate-800">Tambah kartu sendiri</p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <div className="space-y-1">
+            <p className="text-xs text-slate-600">Prompt</p>
+            <Input value={newCard.prompt} onChange={(e) => setNewCard((p) => ({ ...p, prompt: e.target.value }))} />
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-slate-600">Jawaban</p>
+            <Input value={newCard.answer} onChange={(e) => setNewCard((p) => ({ ...p, answer: e.target.value }))} />
+          </div>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <div className="space-y-1">
+            <p className="text-xs text-slate-600">Level</p>
+            <select
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              value={newCard.level}
+              onChange={(e) => setNewCard((p) => ({ ...p, level: e.target.value as "beginner" | "n5" }))}
+            >
+              <option value="beginner">Beginner</option>
+              <option value="n5">N5</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-slate-600">Jenis</p>
+            <select
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              value={newCard.type}
+              onChange={(e) => setNewCard((p) => ({ ...p, type: e.target.value as Flashcard["type"] }))}
+            >
+              <option value="kana">Kana</option>
+              <option value="vocab">Vocab</option>
+              <option value="kanji">Kanji</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="primary"
+            className="px-4"
+            disabled={!newCard.prompt || !newCard.answer || creating || !token}
+            onClick={async () => {
+              if (!token) return;
+              setCreating(true);
+              setError(null);
+              try {
+                await createCustomFlashcard(token, newCard);
+                const data = await fetchDueFlashcards(token);
+                const stat = await fetchSrsStats(token);
+                setCards(data);
+                setStats(stat);
+                setNewCard({ prompt: "", answer: "", level: newCard.level, type: newCard.type });
+              } catch (err) {
+                setError(err instanceof Error ? err.message : "Gagal menambah kartu");
+              } finally {
+                setCreating(false);
+              }
+            }}
+          >
+            {creating ? "Menyimpan..." : "Tambah kartu"}
+          </Button>
+        </div>
+      </div>
     </Card>
   );
 }

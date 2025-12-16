@@ -1,0 +1,8 @@
+[
+  { "prompt": "あ", "answer": "a", "level": "beginner", "type": "kana" },
+  { "prompt": "い", "answer": "i", "level": "beginner", "type": "kana" },
+  { "prompt": "う", "answer": "u", "level": "beginner", "type": "kana" },
+  { "prompt": "人", "answer": "ひと · orang", "level": "n5", "type": "kanji" },
+  { "prompt": "水", "answer": "みず · air", "level": "n5", "type": "kanji" },
+  { "prompt": "ありがとう", "answer": "Terima kasih", "level": "n5", "type": "vocab" }
+]

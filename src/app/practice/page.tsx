@@ -1,85 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLearning } from "@/lib/learning-context";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
-type Question = {
-  id: string;
-  prompt: string;
-  choices: string[];
-  answer: string;
-  type: "matching" | "typing" | "ordering" | "reading" | "listening" | "kanji";
-};
-
-type KanjiEntry = {
-  kanji: string;
-  arti_umum: string;
-  kosakata?: { kata: string; baca: string; arti: string }[];
-};
-
-const beginnerQuestions: Question[] = [
-  { id: "b1", prompt: "Matching: pilih romaji yang sesuai untuk kana あ", choices: ["a", "i", "u", "o"], answer: "a", type: "matching" },
-  { id: "b2", prompt: "Matching: kana mana untuk bunyi 'ko'?", choices: ["こ", "か", "け", "く"], answer: "こ", type: "matching" },
-  { id: "b3", prompt: "Typing: pilih kana untuk romaji 'su'", choices: ["す", "そ", "し", "せ"], answer: "す", type: "typing" },
-  { id: "b4", prompt: "Typing: pilih katakana untuk romaji 'a'", choices: ["ア", "エ", "イ", "オ"], answer: "ア", type: "typing" },
-  { id: "b5", prompt: "Ordering: urutan kata untuk 'sushi' dalam kana adalah?", choices: ["すし", "しす", "すさ", "さし"], answer: "すし", type: "ordering" },
-  { id: "b6", prompt: "Matching: romaji untuk kana け adalah?", choices: ["ke", "ka", "ko", "ku"], answer: "ke", type: "matching" },
-  { id: "b7", prompt: "Typing: pilih kana untuk romaji 'ta'", choices: ["た", "て", "と", "ち"], answer: "た", type: "typing" },
-  { id: "b8", prompt: "Ordering: mana yang menulis 'ai' (cinta) dengan benar?", choices: ["あい", "いあ", "あお", "あん"], answer: "あい", type: "ordering" },
-  { id: "b9", prompt: "Matching: pilih katakana untuk bunyi 'ko'", choices: ["コ", "カ", "ケ", "ク"], answer: "コ", type: "matching" },
-  { id: "b10", prompt: "Typing: kana mana untuk romaji 'ne'?", choices: ["ね", "ぬ", "な", "の"], answer: "ね", type: "typing" }
-];
-
-const n5Questions: Question[] = [
-  { id: "n1", prompt: "Reading: これは りんご です の arti?", choices: ["Ini apel", "Itu apel", "Ini jeruk", "Ini pir"], answer: "Ini apel", type: "reading" },
-  { id: "n2", prompt: "Ordering: susun kalimat 'Saya adalah mahasiswa'.", choices: ["わたし は がくせい です", "です わたし は がくせい", "がくせい です わたし は", "は わたし がくせい です"], answer: "わたし は がくせい です", type: "ordering" },
-  { id: "n3", prompt: "Typing (partikel): Watashi __ sensei です", choices: ["は", "が", "を", "に"], answer: "は", type: "typing" },
-  { id: "n4", prompt: "Kanji: 人 dibaca (kunyomi) sebagai?", choices: ["ひと", "にん", "じん", "ひ"], answer: "ひと", type: "kanji" },
-  { id: "n5", prompt: "Listening (arti): おはようございます berarti?", choices: ["Selamat pagi", "Selamat malam", "Permisi", "Selamat jalan"], answer: "Selamat pagi", type: "listening" },
-  { id: "n6", prompt: "Reading: いま なんじ ですか berarti?", choices: ["Sekarang jam berapa?", "Kamu dari mana?", "Berapa harga?", "Apa kabar?"], answer: "Sekarang jam berapa?", type: "reading" },
-  { id: "n7", prompt: "Ordering: susun kalimat 'Tanaka makan roti'.", choices: ["田中さん は パン を たべます", "パン を 田中さん は たべます", "を パン たべます 田中さん は", "たべます パン を 田中さん は"], answer: "田中さん は パン を たべます", type: "ordering" },
-  { id: "n8", prompt: "Typing (partikel tempat): えき __ いきます", choices: ["に", "を", "が", "で"], answer: "に", type: "typing" },
-  { id: "n9", prompt: "Kanji: 日 arti yang tepat?", choices: ["Hari", "Orang", "Pohon", "Air"], answer: "Hari", type: "kanji" },
-  { id: "n10", prompt: "Listening/meaning: こんにちは digunakan kapan?", choices: ["Siang/halo", "Pagi", "Malam", "Selamat tinggal"], answer: "Siang/halo", type: "listening" }
-];
-
-function shuffle<T>(arr: T[]): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
-function buildKanjiQuestions(entries: KanjiEntry[], count = 10): Question[] {
-  const choicePool = entries
-    .flatMap((item) => item.kosakata?.map((kv) => `${kv.baca} · ${kv.arti}`) ?? [])
-    .filter(Boolean);
-
-  return shuffle(entries)
-    .slice(0, count)
-    .map((entry, idx) => {
-      const kosakata = entry.kosakata ?? [];
-      const picked = kosakata.length ? kosakata[Math.floor(Math.random() * kosakata.length)] : undefined;
-      const correct = picked ? `${picked.baca} · ${picked.arti}` : `${entry.kanji} · ${entry.arti_umum}`;
-      const distractors = shuffle(choicePool.filter((choice) => choice !== correct)).slice(0, 3);
-      const choices = shuffle([correct, ...distractors]);
-
-      return {
-        id: `kanji-${entry.kanji}-${idx}`,
-        prompt: entry.kanji,
-        choices,
-        answer: correct,
-        type: "kanji"
-      };
-    });
-}
+import { useAuth } from "@/lib/auth-context";
+import { AuthCard } from "@/components/auth/AuthCard";
+import { fetchPlacementQuestions, fetchQuestions, submitAnswers } from "@/lib/practice-api";
+import { Question } from "@/lib/types";
 
 function QuestionCard({
   question,
@@ -131,97 +62,59 @@ function QuestionCard({
 }
 
 export default function PracticePage() {
+  const { user, loading: authLoading, token } = useAuth();
   const { profile } = useLearning();
   const searchParams = useSearchParams();
+  const isPlacement = searchParams.get("mode") === "placement";
   const isKanjiMode = searchParams.get("mode") === "kanji";
   const isBeginner = profile.track === "beginner";
   const router = useRouter();
 
-  const [kanjiData, setKanjiData] = useState<KanjiEntry[] | null>(null);
-  const [kanjiLoading, setKanjiLoading] = useState(false);
-
-  useEffect(() => {
-    if (!isKanjiMode) return;
-    let cancelled = false;
-
-    const loadKanji = async () => {
-      setKanjiLoading(true);
-      try {
-        const cached = typeof window !== "undefined" ? localStorage.getItem("kanji_n5_cache_v1") : null;
-        if (cached) {
-          const parsed = JSON.parse(cached) as KanjiEntry[];
-          if (!cancelled) setKanjiData(parsed);
-          return;
-        }
-
-        const module = await import("@/assets/kanji_n5.json");
-        const data = (module.default ?? module) as KanjiEntry[];
-        if (!cancelled) {
-          setKanjiData(data);
-          localStorage.setItem("kanji_n5_cache_v1", JSON.stringify(data));
-        }
-      } catch (err) {
-        console.error("Gagal memuat kanji N5", err);
-      } finally {
-        if (!cancelled) setKanjiLoading(false);
-      }
-    };
-
-    loadKanji();
-    return () => {
-      cancelled = true;
-    };
-  }, [isKanjiMode]);
-
-  const baseQuestions = useMemo(() => {
-    if (isKanjiMode) {
-      if (!kanjiData) return [];
-      return buildKanjiQuestions(kanjiData, 10);
-    }
-    return isBeginner ? beginnerQuestions : n5Questions;
-  }, [isBeginner, isKanjiMode, kanjiData]);
-
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    if (!baseQuestions.length) return;
-    setQuestions(shuffle(baseQuestions).slice(0, 10));
-    setAnswers({});
-    setCurrent(0);
-  }, [baseQuestions]);
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const total = questions.length || 10;
   const answeredCount = Object.keys(answers).length;
+  const canSubmit = answeredCount === total && !loadingQuestions;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!questions.length) return;
-    const score = questions.reduce((acc, q) => acc + (answers[q.id] === q.answer ? 1 : 0), 0);
-    const level = isKanjiMode ? "kanji" : isBeginner ? "beginner" : "n5";
+    if (!token) return;
+    const level = mode;
 
-    const detailedAnswers = questions.map((q, idx) => {
-      const userAnswer = answers[q.id];
-      const prompt = q.type === "kanji" ? `Kanji ${q.prompt}` : q.prompt;
-      return {
-        id: q.id,
-        number: idx + 1,
-        prompt,
-        type: q.type,
-        selected: userAnswer,
-        correct: q.answer,
-        isCorrect: userAnswer === q.answer
-      };
-    });
+    const payload = questions.map((q) => ({
+      questionId: q.id,
+      selected: answers[q.id] ?? ""
+    }));
 
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem(
-        "last_result_detail",
-        JSON.stringify({ detail: detailedAnswers, level, total, score })
-      );
+    try {
+      const resp = await submitAnswers(level, payload, token);
+
+      const detailedAnswers = (resp.answers || []).map((item, idx: number) => ({
+        id: item.questionId || `q-${idx}`,
+        number: item.questionOrdinal || idx + 1,
+        prompt: item.promptSnapshot || "",
+        type: item.type || "matching",
+        selected: item.selected,
+        correct: item.correct,
+        isCorrect: item.isCorrect
+      }));
+
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(
+          "last_result_detail",
+          JSON.stringify({ detail: detailedAnswers, level, total: resp.total, score: resp.score })
+        );
+      }
+
+      router.push(`/result?score=${resp.score}&total=${resp.total}&level=${level}`);
+    } catch (err) {
+      console.error("Submit gagal", err);
+      alert(err instanceof Error ? err.message : "Gagal mengirim jawaban");
     }
-
-    router.push(`/result?score=${score}&total=${total}&level=${level}`);
   };
 
   const handleGoHome = () => {
@@ -231,8 +124,58 @@ export default function PracticePage() {
   };
 
   const activeQuestion = questions[current];
-  const levelLabel = isKanjiMode ? "Kanji N5" : isBeginner ? "Beginner (Kana)" : "N5 Dasar";
-  const showKanjiLoading = isKanjiMode && (kanjiLoading || !kanjiData) && !questions.length;
+  const levelLabel = isPlacement ? "Placement Beginner" : isKanjiMode ? "Kanji N5" : isBeginner ? "Beginner (Kana)" : "N5 Dasar";
+  const mode: "kanji" | "beginner" | "n5" | "placement" =
+    searchParams.get("mode") === "placement" ? "placement" : isKanjiMode ? "kanji" : isBeginner ? "beginner" : "n5";
+
+  useEffect(() => {
+    if (!user || !token) return;
+    let cancelled = false;
+    const load = async () => {
+      setLoadingQuestions(true);
+      setLoadError(null);
+      try {
+        const data = isPlacement ? await fetchPlacementQuestions(token) : await fetchQuestions(mode, token);
+        // Randomize choices so jawaban benar tidak selalu di posisi pertama.
+        const shuffled = data.map((q) => {
+          const choices = [...q.choices];
+          for (let i = choices.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [choices[i], choices[j]] = [choices[j], choices[i]];
+          }
+          return { ...q, choices };
+        });
+        if (!cancelled) {
+          setQuestions(shuffled.slice(0, 10));
+          setAnswers({});
+          setCurrent(0);
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Gagal memuat soal";
+        setLoadError(msg);
+      } finally {
+        if (!cancelled) setLoadingQuestions(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [isPlacement, mode, token, user]);
+
+  if (!user && !authLoading) {
+    return (
+      <main className="mx-auto flex max-w-4xl flex-col gap-4 px-4 py-8">
+        <Card className="space-y-3 border border-slate-100 p-5 text-center">
+          <p className="text-lg font-semibold text-slate-900">Masuk dulu untuk mulai latihan</p>
+          <p className="text-sm text-slate-600">
+            Simpan jawaban, skor, dan progresmu dengan akun Tomodachi.
+          </p>
+          <AuthCard />
+        </Card>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 md:gap-5 md:py-10">
@@ -240,23 +183,28 @@ export default function PracticePage() {
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-wide text-white/80">Step 2 · {isKanjiMode ? "Latihan Kanji" : "Latihan Inti"}</p>
-            <h1 className="text-2xl font-bold sm:text-3xl">Latihan {levelLabel}</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl">{isPlacement ? "Placement Test" : `Latihan ${levelLabel}`}</h1>
             <p className="text-sm leading-relaxed text-white/85">
               {isKanjiMode
                 ? "Mode kanji: tebak bacaan hiragana + arti bahasa Indonesia untuk tiap kanji. Soal diambil acak dari bank Kanji N5."
-                : "Mode latihan disesuaikan dengan jalur yang dipilih di onboarding. Ubah jalur di halaman utama jika perlu."}
+                : isPlacement
+                  ? "Placement beginner: konversi kata/kalimat hiragana/katakana ↔ romaji untuk cek dasar sebelum mulai."
+                  : "Mode latihan disesuaikan dengan jalur yang dipilih di onboarding. Ubah jalur di halaman utama jika perlu."}
             </p>
           </div>
           <div className="flex items-center gap-2 md:self-start">
-            <Badge tone="warning">{isKanjiMode ? "Kanji" : isBeginner ? "Beginner" : "N5"}</Badge>
+            <Badge tone="warning">{isPlacement ? "Placement" : isKanjiMode ? "Kanji" : isBeginner ? "Beginner" : "N5"}</Badge>
             <Link href="/">
-              <Button variant="ghost" className="text-white hover:bg-white/10">
+              <Button
+                variant="ghost"
+                className="text-white hover:bg-white/10"
+              >
                 Ganti preferensi
               </Button>
             </Link>
             <Button
-              variant="outline"
-              className="h-10 w-10 border-white/40 p-0 text-white hover:bg-white/10"
+              variant="ghost"
+              className="h-10 w-10 p-0 text-white hover:bg-white/10"
               onClick={handleGoHome}
               aria-label="Kembali ke beranda"
             >
@@ -285,13 +233,17 @@ export default function PracticePage() {
               Soal {current + 1}/{total} · pilihan A-D
             </p>
             <p className="text-xs text-slate-500">
-              {isKanjiMode ? "Kanji: baca (hiragana) + arti bahasa Indonesia" : "Matching, typing, ordering sesuai level"}
+              {isKanjiMode
+                ? "Kanji: baca (hiragana) + arti bahasa Indonesia"
+                : isPlacement
+                  ? "Placement: konversi kata/kalimat kana ↔ romaji"
+                  : "Matching, typing, ordering sesuai level"}
             </p>
           </div>
           <Badge tone="info">Level: {levelLabel}</Badge>
         </div>
 
-        {showKanjiLoading ? (
+        {loadingQuestions ? (
           <Card className="flex flex-col items-center justify-center gap-3 border border-slate-100 p-6 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50">
               <svg
@@ -307,9 +259,19 @@ export default function PracticePage() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-800">Memuat bank kanji N5…</p>
-              <p className="text-xs text-slate-500">Disimpan di perangkat agar lebih cepat saat dibuka lagi.</p>
+              <p className="text-sm font-semibold text-slate-800">Memuat soal latihan…</p>
+              <p className="text-xs text-slate-500">Diambil dari server sesuai mode latihan.</p>
             </div>
+          </Card>
+        ) : null}
+
+        {loadError ? (
+          <Card className="space-y-2 border border-amber-200 bg-amber-50 p-4">
+            <p className="text-sm font-semibold text-amber-800">Gagal memuat soal</p>
+            <p className="text-xs text-amber-800/80">{loadError}</p>
+            <Button variant="primary" className="w-fit" onClick={() => router.refresh()}>
+              Coba lagi
+            </Button>
           </Card>
         ) : null}
 
@@ -347,7 +309,7 @@ export default function PracticePage() {
                   variant="primary"
                   className="w-full px-4 sm:w-auto"
                   onClick={handleSubmit}
-                  disabled={answeredCount < total}
+                  disabled={!canSubmit}
                 >
                   Submit jawaban
                 </Button>

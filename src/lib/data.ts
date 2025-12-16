@@ -46,7 +46,7 @@ export const tracks: LearningTrack[] = [
           },
           {
             id: "hi-k",
-            title: "K-Line",
+            title: "KA KI KU KE KO",
             summary: "Ka Ki Ku Ke Ko dengan latihan dengar → pilih.",
             level: "beginner",
             skillTags: ["listening", "reading"],
@@ -66,6 +66,86 @@ export const tracks: LearningTrack[] = [
                 answer: "ku"
               }
             ]
+          },
+          {
+            id: "hi-s",
+            title: "SA SHI SU SE SO",
+            summary: "Konsonan S-line dengan variasi shi.",
+            level: "beginner",
+            skillTags: ["listening", "reading"],
+            estimatedMinutes: 9,
+            audioHint: "さ し す せ そ",
+            quiz: []
+          },
+          {
+            id: "hi-t",
+            title: "TA CHI TSU TE TO",
+            summary: "Konsonan T-line dengan chi/tsu.",
+            level: "beginner",
+            skillTags: ["listening", "reading"],
+            estimatedMinutes: 9,
+            audioHint: "た ち つ て と",
+            quiz: []
+          },
+          {
+            id: "hi-n",
+            title: "NA NI NU NE NO",
+            summary: "Konsonan N-line.",
+            level: "beginner",
+            skillTags: ["listening", "reading"],
+            estimatedMinutes: 8,
+            audioHint: "な に ぬ ね の",
+            quiz: []
+          },
+          {
+            id: "hi-h",
+            title: "HA HI FU HE HO",
+            summary: "Konsonan H-line (fu khusus).",
+            level: "beginner",
+            skillTags: ["listening", "reading"],
+            estimatedMinutes: 8,
+            audioHint: "は ひ ふ へ ほ",
+            quiz: []
+          },
+          {
+            id: "hi-m",
+            title: "MA MI MU ME MO",
+            summary: "Konsonan M-line.",
+            level: "beginner",
+            skillTags: ["listening", "reading"],
+            estimatedMinutes: 8,
+            audioHint: "ま み む め も",
+            quiz: []
+          },
+          {
+            id: "hi-y",
+            title: "YA YU YO + N",
+            summary: "Semi-vokal Y-line dan ん.",
+            level: "beginner",
+            skillTags: ["listening", "reading"],
+            estimatedMinutes: 8,
+            audioHint: "や ゆ よ ん",
+            quiz: []
+          },
+          {
+            id: "hi-r",
+            title: "RA RI RU RE RO",
+            summary: "Konsonan R-line.",
+            level: "beginner",
+            skillTags: ["listening", "reading"],
+            estimatedMinutes: 8,
+            audioHint: "ら り る れ ろ",
+            quiz: []
+          },
+          {
+            id: "hi-w",
+            title: "WA WO + Kombo",
+            summary: "WA/WO dan kombo kecil ya/yu/yo.",
+            level: "beginner",
+            skillTags: ["listening", "reading"],
+            estimatedMinutes: 10,
+            audioHint: "わ を きゃ きゅ きょ",
+            quiz: []
           }
         ]
       },

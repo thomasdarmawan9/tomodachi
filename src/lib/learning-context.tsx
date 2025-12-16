@@ -18,6 +18,7 @@ interface LearningState {
 }
 
 type Action =
+  | { type: "setProfile"; payload?: Profile }
   | { type: "updateProfile"; payload: Partial<Profile> }
   | {
       type: "updateTrackStatus";
@@ -27,14 +28,17 @@ type Action =
       type: "gradeCard";
       payload: { cardId: string; quality: "again" | "good" | "easy" };
     }
-  | { type: "completeOnboarding" };
+  | { type: "completeOnboarding" }
+  | { type: "setOnboardingComplete"; payload: boolean };
 
 const LearningContext = createContext<
   | (LearningState & {
+      setProfile: (profile?: Profile) => void;
       updateProfile: (patch: Partial<Profile>) => void;
       markUnit: (trackId: TrackKey, unitId: string, status: "in_progress" | "completed") => void;
       gradeCard: (cardId: string, quality: "again" | "good" | "easy") => void;
       completeOnboarding: () => void;
+      setOnboardingComplete: (value: boolean) => void;
     })
   | undefined
 >(undefined);
@@ -67,6 +71,10 @@ function updateSrs(card: Flashcard, quality: "again" | "good" | "easy"): Flashca
 
 function reducer(state: LearningState, action: Action): LearningState {
   switch (action.type) {
+    case "setProfile": {
+      if (!action.payload) return { ...state, profile: defaultProfile };
+      return { ...state, profile: action.payload };
+    }
     case "updateProfile": {
       return { ...state, profile: { ...state.profile, ...action.payload } };
     }
@@ -100,6 +108,9 @@ function reducer(state: LearningState, action: Action): LearningState {
     case "completeOnboarding": {
       return { ...state, onboardingComplete: true };
     }
+    case "setOnboardingComplete": {
+      return { ...state, onboardingComplete: action.payload };
+    }
     default:
       return state;
   }
@@ -111,13 +122,16 @@ export function LearningProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(
     () => ({
       ...state,
+      setProfile: (profile?: Profile) =>
+        dispatch({ type: "setProfile", payload: profile }),
       updateProfile: (patch: Partial<Profile>) =>
         dispatch({ type: "updateProfile", payload: patch }),
       markUnit: (trackId: TrackKey, unitId: string, status: "in_progress" | "completed") =>
         dispatch({ type: "updateTrackStatus", payload: { trackId, unitId, status } }),
       gradeCard: (cardId: string, quality: "again" | "good" | "easy") =>
         dispatch({ type: "gradeCard", payload: { cardId, quality } }),
-      completeOnboarding: () => dispatch({ type: "completeOnboarding" })
+      completeOnboarding: () => dispatch({ type: "completeOnboarding" }),
+      setOnboardingComplete: (value: boolean) => dispatch({ type: "setOnboardingComplete", payload: value })
     }),
     [state]
   );

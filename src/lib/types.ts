@@ -41,6 +41,16 @@ export interface Flashcard {
   type: "kana" | "vocab" | "kanji";
 }
 
+export type QuestionType = "matching" | "typing" | "ordering" | "reading" | "listening" | "kanji";
+
+export interface Question {
+  id: string;
+  prompt: string;
+  choices: string[];
+  answer: string;
+  type: QuestionType;
+}
+
 export interface TrackUnit {
   id: string;
   title: string;

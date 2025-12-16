@@ -6,6 +6,8 @@ import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/lib/auth-context";
+import { AuthCard } from "@/components/auth/AuthCard";
 
 type AnswerDetail = {
   id: string;
@@ -43,6 +45,7 @@ function ScoreDonut({ score, total }: { score: number; total: number }) {
 }
 
 export default function ResultPage() {
+  const { user, loading: authLoading } = useAuth();
   const params = useSearchParams();
   const score = Number(params.get("score") || 0);
   const total = Number(params.get("total") || 10);
@@ -79,6 +82,18 @@ export default function ResultPage() {
 
   const incorrect = useMemo(() => details.filter((item) => !item.isCorrect), [details]);
 
+  if (!user && !authLoading) {
+    return (
+      <main className="mx-auto flex max-w-4xl flex-col gap-4 px-4 py-8">
+        <Card className="space-y-3 border border-slate-100 p-5 text-center">
+          <p className="text-lg font-semibold text-slate-900">Masuk untuk melihat hasil latihan</p>
+          <p className="text-sm text-slate-600">Hasil dan review jawaban disimpan di akunmu.</p>
+          <AuthCard />
+        </Card>
+      </main>
+    );
+  }
+
   return (
     <main className="mx-auto flex max-w-4xl flex-col gap-5 px-4 py-6 md:py-10">
       <header className="rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 px-5 py-6 text-white shadow-card">
@@ -103,7 +118,10 @@ export default function ResultPage() {
           </p>
           <div className="flex flex-wrap gap-2">
             <Link href="/">
-              <Button variant="ghost" className="px-4">
+              <Button
+                variant="outline"
+                className="px-4 border-brand-200 text-brand-700 hover:bg-brand-50"
+              >
                 Ke Beranda
               </Button>
             </Link>

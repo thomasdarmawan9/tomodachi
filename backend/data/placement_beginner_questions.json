@@ -1,0 +1,602 @@
+[
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ありがとう」?",
+    "type": "matching",
+    "answer": "arigatou",
+    "choices": [
+      "arigatou",
+      "arigato",
+      "arikatou",
+      "arigetu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「こんばんは」?",
+    "type": "matching",
+    "answer": "konbanwa",
+    "choices": [
+      "konbanwa",
+      "konbanha",
+      "konbawa",
+      "kombanwa"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「おはよう」?",
+    "type": "matching",
+    "answer": "ohayou",
+    "choices": [
+      "ohayou",
+      "ohayo",
+      "ohyoo",
+      "ohyau"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「さようなら」?",
+    "type": "matching",
+    "answer": "sayounara",
+    "choices": [
+      "sayounara",
+      "sayonara",
+      "sayunara",
+      "sayonaru"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「はじめまして」?",
+    "type": "matching",
+    "answer": "hajimemashite",
+    "choices": [
+      "hajimemashite",
+      "hajimemasite",
+      "hazimemashite",
+      "hajime mashite"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「すみません」?",
+    "type": "matching",
+    "answer": "sumimasen",
+    "choices": [
+      "sumimasen",
+      "sumasen",
+      "sumimasan",
+      "sumimasem"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ください」?",
+    "type": "matching",
+    "answer": "kudasai",
+    "choices": [
+      "kudasai",
+      "kudassai",
+      "kudasae",
+      "kudesai"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「たべる」?",
+    "type": "matching",
+    "answer": "taberu",
+    "choices": [
+      "taberu",
+      "tabelu",
+      "tabero",
+      "tabaru"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「のむ」?",
+    "type": "matching",
+    "answer": "nomu",
+    "choices": [
+      "nomu",
+      "nomo",
+      "nomi",
+      "nonmu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「いく」?",
+    "type": "matching",
+    "answer": "iku",
+    "choices": [
+      "iku",
+      "iko",
+      "ikuo",
+      "ikuu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「くるま」?",
+    "type": "matching",
+    "answer": "kuruma",
+    "choices": [
+      "kuruma",
+      "kurma",
+      "kurumae",
+      "kuramu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ほん」?",
+    "type": "matching",
+    "answer": "hon",
+    "choices": [
+      "hon",
+      "hoon",
+      "honya",
+      "honu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「えいご」?",
+    "type": "matching",
+    "answer": "eigo",
+    "choices": [
+      "eigo",
+      "eiko",
+      "eigoo",
+      "ego"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「にほんご」?",
+    "type": "matching",
+    "answer": "nihongo",
+    "choices": [
+      "nihongo",
+      "nihonngo",
+      "nihogo",
+      "nihango"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「がっこう」?",
+    "type": "matching",
+    "answer": "gakkou",
+    "choices": [
+      "gakkou",
+      "gakou",
+      "gakkouu",
+      "gakkyo"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ともだち」?",
+    "type": "matching",
+    "answer": "tomodachi",
+    "choices": [
+      "tomodachi",
+      "tomodati",
+      "tomodashi",
+      "tomodatsu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ねこ」?",
+    "type": "matching",
+    "answer": "neko",
+    "choices": [
+      "neko",
+      "neku",
+      "nako",
+      "neka"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「いぬ」?",
+    "type": "matching",
+    "answer": "inu",
+    "choices": [
+      "inu",
+      "inuu",
+      "ino",
+      "inuo"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「きょう」?",
+    "type": "matching",
+    "answer": "kyou",
+    "choices": [
+      "kyou",
+      "kyo",
+      "kyouu",
+      "kyuu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ひるごはん」?",
+    "type": "matching",
+    "answer": "hirugohan",
+    "choices": [
+      "hirugohan",
+      "hirugoban",
+      "hirugahan",
+      "hirugohon"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「あさごはん」?",
+    "type": "matching",
+    "answer": "asagohan",
+    "choices": [
+      "asagohan",
+      "asagoban",
+      "asagahan",
+      "asagohon"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「よるごはん」?",
+    "type": "matching",
+    "answer": "yorugohan",
+    "choices": [
+      "yorugohan",
+      "yorugoban",
+      "yorugahan",
+      "yorugohon"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「みず」?",
+    "type": "matching",
+    "answer": "mizu",
+    "choices": [
+      "mizu",
+      "miso",
+      "midzu",
+      "mizuu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「おちゃ」?",
+    "type": "matching",
+    "answer": "ocha",
+    "choices": [
+      "ocha",
+      "occha",
+      "ochya",
+      "ochae"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ぎゅうにゅう」?",
+    "type": "matching",
+    "answer": "gyuunyuu",
+    "choices": [
+      "gyuunyuu",
+      "gyunyu",
+      "gyuuyuu",
+      "gyuunyu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Hiragana apa untuk romaji 'kippu'?",
+    "type": "matching",
+    "answer": "きっぷ",
+    "choices": [
+      "きっぷ",
+      "きぷ",
+      "きっぴ",
+      "きっぼ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Hiragana apa untuk romaji 'densha'?",
+    "type": "matching",
+    "answer": "でんしゃ",
+    "choices": [
+      "でんしゃ",
+      "でしゃ",
+      "でんさ",
+      "でんしや"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Hiragana apa untuk romaji 'eki'?",
+    "type": "matching",
+    "answer": "えき",
+    "choices": [
+      "えき",
+      "えぎ",
+      "えけ",
+      "えこ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Hiragana apa untuk romaji 'kazoku'?",
+    "type": "matching",
+    "answer": "かぞく",
+    "choices": [
+      "かぞく",
+      "かそく",
+      "かぞき",
+      "かぞこ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Hiragana apa untuk romaji 'kaisha'?",
+    "type": "matching",
+    "answer": "かいしゃ",
+    "choices": [
+      "かいしゃ",
+      "かいさ",
+      "かいしゃん",
+      "かいしや"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'aisu'?",
+    "type": "matching",
+    "answer": "アイス",
+    "choices": [
+      "アイス",
+      "アイシ",
+      "アエス",
+      "アイソ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'keeki'?",
+    "type": "matching",
+    "answer": "ケーキ",
+    "choices": [
+      "ケーキ",
+      "ケキ",
+      "ケーク",
+      "ケーカ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'tesuto'?",
+    "type": "matching",
+    "answer": "テスト",
+    "choices": [
+      "テスト",
+      "テスツ",
+      "テストウ",
+      "テストア"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'nooto'?",
+    "type": "matching",
+    "answer": "ノート",
+    "choices": [
+      "ノート",
+      "ノト",
+      "ノートウ",
+      "ノーテ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'pan'?",
+    "type": "matching",
+    "answer": "パン",
+    "choices": [
+      "パン",
+      "パニ",
+      "パヌ",
+      "パノ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'suupaa'?",
+    "type": "matching",
+    "answer": "スーパー",
+    "choices": [
+      "スーパー",
+      "スパー",
+      "スーハー",
+      "スーピー"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'hoteru'?",
+    "type": "matching",
+    "answer": "ホテル",
+    "choices": [
+      "ホテル",
+      "ホテルー",
+      "ホデル",
+      "ホテロ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'kafe'?",
+    "type": "matching",
+    "answer": "カフェ",
+    "choices": [
+      "カフェ",
+      "カヘ",
+      "カペ",
+      "カフエ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'meeru'?",
+    "type": "matching",
+    "answer": "メール",
+    "choices": [
+      "メール",
+      "メエル",
+      "メイル",
+      "メールウ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Katakana apa untuk romaji 'konbini'?",
+    "type": "matching",
+    "answer": "コンビニ",
+    "choices": [
+      "コンビニ",
+      "コンミニ",
+      "コンピニ",
+      "コンビニイ"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「サッカー」?",
+    "type": "matching",
+    "answer": "sakkaa",
+    "choices": [
+      "sakkaa",
+      "saka",
+      "sakka",
+      "saku"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「バス」?",
+    "type": "matching",
+    "answer": "basu",
+    "choices": [
+      "basu",
+      "batsu",
+      "basa",
+      "bashi"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「タクシー」?",
+    "type": "matching",
+    "answer": "takushii",
+    "choices": [
+      "takushii",
+      "takushi",
+      "takusii",
+      "takushie"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ピザ」?",
+    "type": "matching",
+    "answer": "piza",
+    "choices": [
+      "piza",
+      "pisa",
+      "pizae",
+      "pizu"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「コーヒー」?",
+    "type": "matching",
+    "answer": "koohii",
+    "choices": [
+      "koohii",
+      "kohii",
+      "koohi",
+      "kohee"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「スマホ」?",
+    "type": "matching",
+    "answer": "sumaho",
+    "choices": [
+      "sumaho",
+      "sumafo",
+      "sumapo",
+      "sumahoo"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「バナナ」?",
+    "type": "matching",
+    "answer": "banana",
+    "choices": [
+      "banana",
+      "bananna",
+      "banena",
+      "bannana"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ペン」?",
+    "type": "matching",
+    "answer": "pen",
+    "choices": [
+      "pen",
+      "ben",
+      "peno",
+      "peni"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「ラーメン」?",
+    "type": "matching",
+    "answer": "raamen",
+    "choices": [
+      "raamen",
+      "ramen",
+      "raemen",
+      "raiman"
+    ]
+  },
+  {
+    "track": "placement",
+    "prompt": "Romaji apa untuk kata 「シャワー」?",
+    "type": "matching",
+    "answer": "shawaa",
+    "choices": [
+      "shawaa",
+      "shawa",
+      "shawao",
+      "shuwaa"
+    ]
+  }
+]

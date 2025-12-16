@@ -1,21 +1,34 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { OnboardingPanel } from "@/components/onboarding/OnboardingPanel";
 import { ProfileSummary } from "@/components/profile/ProfileSummary";
 import { FlashcardReview } from "@/components/srs/FlashcardReview";
 import { TrackBoard } from "@/components/tracks/TrackBoard";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useLearning } from "@/lib/learning-context";
+import Image from "next/image";
+import heroPerson from "@/assets/peoplehome.png";
+import { AuthCard } from "@/components/auth/AuthCard";
+import { useAuth } from "@/lib/auth-context";
 import { ToriiIllustration } from "@/components/illustrations/Torii";
+import { fetchHistory, type PracticeAttempt } from "@/lib/practice-api";
+import { fetchNextUnit } from "@/lib/tracks-api";
+import type { TrackUnit } from "@/lib/types";
 
 export default function HomePage() {
   const { onboardingComplete, profile } = useLearning();
+  const { user, logout, token } = useAuth();
+  const [history, setHistory] = useState<PracticeAttempt[]>([]);
+  const [nextUnit, setNextUnit] = useState<TrackUnit | null>(null);
   const [levelTab, setLevelTab] = useState<
     "beginner" | "n5" | "n4" | "n3" | "n2" | "n1"
   >("beginner");
   const isN5Track = profile.track === "n5";
+  const isAuthenticated = Boolean(user);
 
   const tabs = useMemo(
     () => [
@@ -29,6 +42,25 @@ export default function HomePage() {
     []
   );
 
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const h = await fetchHistory(token);
+        if (!cancelled) setHistory(h.slice(0, 5));
+        const n = await fetchNextUnit(profile.track, token);
+        if (!cancelled) setNextUnit(n.unit || null);
+      } catch (err) {
+        console.warn("Failed to load dashboard extras", err);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [token, profile.track]);
+
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 md:py-10">
       <header className="rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 px-5 py-6 text-white shadow-card sm:px-6 sm:py-7">
@@ -39,38 +71,46 @@ export default function HomePage() {
             <p className="text-sm leading-relaxed text-white/85">
               Beginner: fokus hiragana/katakana + audio + kuis. N5: vocab, grammar, kanji dengan latihan campuran dan SRS flashcard.
             </p>
-            <div className="flex flex-wrap gap-2 text-xs">
-              <span className="rounded-full bg-white/20 px-3 py-1 font-semibold">Track aktif: pilih Beginner atau N5</span>
-              <span className="rounded-full bg-white/15 px-3 py-1 font-semibold">Target harian: atur menit & fokus skill</span>
+          </div>
+          <div className="hidden items-center justify-center md:flex">
+            <div className="h-44 w-44 overflow-hidden rounded-full bg-white/10 p-1.5 shadow-lg shadow-brand-900/20">
+              <div className="relative h-full w-full overflow-hidden rounded-full bg-white/20">
+                <Image
+                  src={heroPerson}
+                  alt="Belajar bersama Tomodachi"
+                  className="h-full w-full object-cover"
+                  sizes="176px"
+                  priority
+                />
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-2 rounded-xl bg-white/10 p-4 text-sm backdrop-blur sm:grid-cols-2">
-            <div className="rounded-lg bg-white/15 px-3 py-3">
-              <p className="text-xs text-white/80">Mulai cepat</p>
-              <p className="text-lg font-semibold">Onboarding</p>
-              <p className="text-[11px] text-white/80">Set nama, jalur, target.</p>
+          {isAuthenticated ? (
+            <div className="flex flex-col items-end gap-2">
+              <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white/85">
+                {user?.email}
+              </span>
+              <Button variant="outline" className="bg-white/10 text-white hover:bg-white/20" onClick={logout}>
+                Logout
+              </Button>
             </div>
-            <div className="rounded-lg bg-white/15 px-3 py-3">
-              <p className="text-xs text-white/80">Track</p>
-              <p className="text-lg font-semibold">Beginner / N5</p>
-              <p className="text-[11px] text-white/80">Lihat unit & kuis.</p>
-            </div>
-            <div className="rounded-lg bg-white/15 px-3 py-3">
-              <p className="text-xs text-white/80">Review</p>
-              <p className="text-lg font-semibold">SRS & Flashcard</p>
-              <p className="text-[11px] text-white/80">Kana → Vocab/Kanji.</p>
-            </div>
-            <div className="rounded-lg bg-white/15 px-3 py-3">
-              <p className="text-xs text-white/80">Progres</p>
-              <p className="text-lg font-semibold">Ringkasan</p>
-              <p className="text-[11px] text-white/80">XP, streak, unit.</p>
-            </div>
-          </div>
+          ) : null}
         </div>
       </header>
 
       <section className="flex flex-col gap-4">
-        {!onboardingComplete ? (
+        {!isAuthenticated ? (
+          <AuthCard />
+        ) : null}
+
+        {!isAuthenticated ? (
+          <div className="card border border-slate-200 bg-slate-50 p-5 shadow-card">
+            <p className="text-sm font-semibold text-slate-800">Masuk untuk membuka latihan</p>
+            <p className="text-xs text-slate-500">
+              Progres, XP, dan streak akan tersimpan setelah kamu login atau daftar.
+            </p>
+          </div>
+        ) : !onboardingComplete ? (
           <OnboardingPanel />
         ) : (
           <div className="card border border-slate-100 bg-white p-5 shadow-card">
@@ -89,6 +129,11 @@ export default function HomePage() {
                   <Link href="/practice">
                     <Button variant="primary" className="px-4">
                       Buka Latihan Inti
+                    </Button>
+                  </Link>
+                  <Link href="/practice?mode=placement">
+                    <Button variant="outline" className="px-4">
+                      Placement Test
                     </Button>
                   </Link>
                   {isN5Track ? (
@@ -112,7 +157,50 @@ export default function HomePage() {
             </div>
           </div>
         )}
-        <ProfileSummary />
+        {isAuthenticated ? <ProfileSummary /> : null}
+
+        {isAuthenticated ? (
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card className="space-y-2 border border-slate-100 p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-slate-800">Riwayat latihan terbaru</p>
+                <Badge tone="info">{history.length} sesi</Badge>
+              </div>
+              {history.length ? (
+                <div className="space-y-1 text-sm text-slate-700">
+                  {history.map((h) => (
+                    <div key={h.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
+                      <span>{new Date(h.createdAt || h.created_at || h.CreatedAt || Date.now()).toLocaleDateString()}</span>
+                      <span className="font-semibold">{h.score}/{h.total}</span>
+                      <span className="text-xs uppercase text-slate-500">{h.mode}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-500">Belum ada sesi latihan.</p>
+              )}
+            </Card>
+            <Card className="space-y-2 border border-slate-100 p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-slate-800">Lanjutkan belajar</p>
+                <Badge tone="warning">{profile.track === "beginner" ? "Beginner" : "N5"}</Badge>
+              </div>
+              {nextUnit ? (
+                <div className="rounded-lg bg-slate-50 px-3 py-2 text-sm">
+                  <p className="font-semibold text-slate-800">{nextUnit.title}</p>
+                  <p className="text-xs text-slate-500">Unit berikut untuk jalur aktifmu.</p>
+                  <div className="mt-2 flex gap-2">
+                    <Link href="/practice">
+                      <Button variant="primary" className="px-3">Mulai latihan</Button>
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-slate-500">Semua unit selesai! Lanjutkan review atau coba placement.</p>
+              )}
+            </Card>
+          </div>
+        ) : null}
 
         <div className="card space-y-4 border border-slate-100 bg-white p-5 shadow-card">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -147,15 +235,21 @@ export default function HomePage() {
           </div>
         </div>
 
-        {levelTab === "beginner" || levelTab === "n5" ? (
-          <TrackBoard activeTrack={levelTab} />
+        {isAuthenticated ? (
+          levelTab === "beginner" || levelTab === "n5" ? (
+            <TrackBoard activeTrack={levelTab} />
+          ) : (
+            <div className="card border border-dashed border-slate-200 bg-slate-50 text-sm text-slate-600">
+              Jalur {levelTab.toUpperCase()} akan hadir setelah konten siap.
+            </div>
+          )
         ) : (
           <div className="card border border-dashed border-slate-200 bg-slate-50 text-sm text-slate-600">
-            Jalur {levelTab.toUpperCase()} akan hadir setelah konten siap.
+            Login untuk melihat unit & materi yang tersedia.
           </div>
         )}
 
-        <FlashcardReview />
+        {isAuthenticated ? <FlashcardReview /> : null}
       </section>
     </main>
   );

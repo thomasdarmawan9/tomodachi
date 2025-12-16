@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLearning } from "@/lib/learning-context";
-import { Lesson, TrackKey } from "@/lib/types";
+import { Lesson, LearningTrack, TrackKey } from "@/lib/types";
 import { useTonePlayer } from "@/hooks/useTonePlayer";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { QuizCard } from "../quiz/QuizCard";
+import { useAuth } from "@/lib/auth-context";
+import { fetchTracks, fetchUnits, updateUnitStatus } from "@/lib/tracks-api";
 
 function LessonRow({
   lesson,
@@ -49,19 +51,115 @@ function LessonRow({
   );
 }
 
+function Slider({ lessons, onPlay }: { lessons: Lesson[]; onPlay: (hint: string) => void }) {
+  const [index, setIndex] = useState(0);
+  const total = lessons.length;
+  const clamped = Math.max(0, Math.min(index, Math.max(0, total - 1)));
+
+  useEffect(() => {
+    if (clamped !== index) setIndex(clamped);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [total]);
+
+  if (!total) return null;
+
+  const current = lessons[clamped];
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-xl border border-slate-200 bg-white">
+        <LessonRow lesson={current} onPlay={onPlay} />
+      </div>
+      <div className="flex items-center justify-between text-xs text-slate-600">
+        <Button
+          variant="outline"
+          className="text-xs"
+          disabled={clamped === 0}
+          onClick={() => setIndex((prev) => Math.max(0, prev - 1))}
+        >
+          ← Sebelumnya
+        </Button>
+        <span>
+          {clamped + 1}/{total}
+        </span>
+        <Button
+          variant="outline"
+          className="text-xs"
+          disabled={clamped >= total - 1}
+          onClick={() => setIndex((prev) => Math.min(total - 1, prev + 1))}
+        >
+          Berikutnya →
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export function TrackBoard({ activeTrack }: { activeTrack: TrackKey }) {
   const { tracks, markUnit } = useLearning();
   const { playTone } = useTonePlayer();
+  const { token } = useAuth();
+  const [remoteTracks, setRemoteTracks] = useState<LearningTrack[] | null>(null);
+  const [loadingTracks, setLoadingTracks] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    const load = async () => {
+      setLoadingTracks(true);
+      setLoadError(null);
+      try {
+        const t = await fetchTracks(token);
+        const withUnits = await Promise.all(
+          t.map(async (track) => {
+            const units = await fetchUnits(track.id, token);
+            return { ...track, units: units.map((u) => ({ ...u, lessons: u.lessons || [] })) };
+          })
+        );
+        if (!cancelled) setRemoteTracks(withUnits);
+      } catch (err) {
+        if (!cancelled) setLoadError(err instanceof Error ? err.message : "Gagal memuat track");
+      } finally {
+        if (!cancelled) setLoadingTracks(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  const sourceTracks = remoteTracks ?? tracks;
 
   const orderedTracks = useMemo(() => {
-    const clone = [...tracks];
+    const clone = [...sourceTracks];
     return clone.sort((a, b) =>
       a.id === "beginner" ? -1 : b.id === "beginner" ? 1 : 0
     );
-  }, [tracks]);
+  }, [sourceTracks]);
 
-  const handleMark = (trackId: TrackKey, unitId: string) => {
+  const handleMark = async (trackId: TrackKey, unitId: string) => {
     markUnit(trackId, unitId, "completed");
+    if (token) {
+      try {
+        await updateUnitStatus(unitId, "completed", token);
+        setRemoteTracks((prev) =>
+          prev?.map((t) =>
+            t.id === trackId
+              ? {
+                  ...t,
+                  units: t.units.map((u) =>
+                    u.id === unitId ? { ...u, status: "completed" } : u
+                  )
+                }
+              : t
+          ) ?? null
+        );
+      } catch (err) {
+        console.error("Gagal update status unit", err);
+      }
+    }
   };
 
   const visibleTracks = orderedTracks.filter((track) => track.id === activeTrack);
@@ -76,8 +174,19 @@ export function TrackBoard({ activeTrack }: { activeTrack: TrackKey }) {
 
   return (
     <div className="space-y-4">
+      {loadingTracks ? (
+        <Card className="border border-slate-200 bg-slate-50 p-4">
+          <p className="text-sm font-semibold text-slate-800">Memuat track dari server…</p>
+        </Card>
+      ) : null}
+      {loadError ? (
+        <Card className="border border-amber-200 bg-amber-50 p-4">
+          <p className="text-sm font-semibold text-amber-800">Gagal memuat track</p>
+          <p className="text-xs text-amber-800/80">{loadError}</p>
+        </Card>
+      ) : null}
       {visibleTracks.map((track) => {
-        const highlightLesson = track.units[0]?.lessons[0];
+        const highlightLesson = track.units.find((u) => (u.lessons || []).length > 0)?.lessons?.[0];
         const isBeginner = track.id === "beginner";
         const bg =
           isBeginner
@@ -129,19 +238,23 @@ export function TrackBoard({ activeTrack }: { activeTrack: TrackKey }) {
                     </div>
                   </div>
                   <div className="mt-2 space-y-2">
-                    {unit.lessons.slice(0, 2).map((lesson) => (
-                      <LessonRow
-                        key={lesson.id}
-                        lesson={lesson}
-                        onPlay={(hint) => playTone(hint)}
-                      />
-                    ))}
+                    {unit.title.toLowerCase().includes("hiragana") ? (
+                      <Slider lessons={unit.lessons || []} onPlay={playTone} />
+                    ) : (
+                      (unit.lessons || []).slice(0, 2).map((lesson) => (
+                        <LessonRow
+                          key={lesson.id}
+                          lesson={lesson}
+                          onPlay={(hint) => playTone(hint)}
+                        />
+                      ))
+                    )}
                   </div>
                 </div>
               ))}
             </div>
 
-            {highlightLesson && highlightLesson.quiz.length > 0 ? (
+            {highlightLesson && highlightLesson.quiz && highlightLesson.quiz.length > 0 ? (
               <div className="space-y-2">
                 <p className="text-sm font-semibold text-slate-800">Contoh kuis</p>
                 <QuizCard item={highlightLesson.quiz[0]} />
