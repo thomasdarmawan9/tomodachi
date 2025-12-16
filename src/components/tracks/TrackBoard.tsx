@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLearning } from "@/lib/learning-context";
 import { Lesson, LearningTrack, TrackKey } from "@/lib/types";
 import { useTonePlayer } from "@/hooks/useTonePlayer";
