@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLearning } from "@/lib/learning-context";
 import { Badge } from "@/components/ui/badge";
@@ -61,7 +61,7 @@ function QuestionCard({
   );
 }
 
-export default function PracticePage() {
+function PracticeContent() {
   const { user, loading: authLoading, token } = useAuth();
   const { profile } = useLearning();
   const searchParams = useSearchParams();
@@ -319,5 +319,21 @@ export default function PracticePage() {
         ) : null}
       </section>
     </main>
+  );
+}
+
+export default function PracticePage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-10">
+          <Card className="border border-slate-200 bg-slate-50 p-4">
+            <p className="text-sm text-slate-700">Memuat latihan...</p>
+          </Card>
+        </main>
+      }
+    >
+      <PracticeContent />
+    </Suspense>
   );
 }
