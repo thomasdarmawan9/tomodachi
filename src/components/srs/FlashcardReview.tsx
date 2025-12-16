@@ -7,7 +7,7 @@ import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { useAuth } from "@/lib/auth-context";
 import { createCustomFlashcard, fetchDueFlashcards, fetchSrsStats, gradeFlashcard } from "@/lib/srs-api";
-import { Flashcard } from "@/lib/types";
+import { Flashcard, TrackKey } from "@/lib/types";
 
 export function FlashcardReview() {
   const { token } = useAuth();
@@ -17,7 +17,12 @@ export function FlashcardReview() {
   const [reveal, setReveal] = useState(false);
   const [stats, setStats] = useState<{ reviewedToday: number; totalCards: number; dueCards: number } | null>(null);
   const [creating, setCreating] = useState(false);
-  const [newCard, setNewCard] = useState({ prompt: "", answer: "", level: "beginner", type: "kana" as Flashcard["type"] });
+  const [newCard, setNewCard] = useState<{ prompt: string; answer: string; level: TrackKey; type: Flashcard["type"]}>({
+    prompt: "",
+    answer: "",
+    level: "beginner",
+    type: "kana"
+  });
 
   useEffect(() => {
     if (!token) return;
