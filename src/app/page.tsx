@@ -69,7 +69,7 @@ export default function HomePage() {
             <p className="text-sm uppercase tracking-wide text-white/80">Tomodachi · Japanese Learning</p>
             <h1 className="text-2xl font-bold sm:text-3xl">Halo, mari lanjutkan belajarmu</h1>
             <p className="text-sm leading-relaxed text-white/85">
-              Beginner: fokus hiragana/katakana + audio + kuis.<br>
+              Beginner: fokus hiragana/katakana + audio + kuis.<br></br>
               N5: vocab, grammar, kanji dengan latihan campuran dan SRS flashcard.
             </p>
           </div>
