@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ function ScoreDonut({ score, total }: { score: number; total: number }) {
   );
 }
 
-export default function ResultPage() {
+function ResultContent() {
   const { user, loading: authLoading } = useAuth();
   const params = useSearchParams();
   const score = Number(params.get("score") || 0);
@@ -192,5 +192,21 @@ export default function ResultPage() {
         )}
       </Card>
     </main>
+  );
+}
+
+export default function ResultPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto flex max-w-4xl flex-col gap-4 px-4 py-8">
+          <Card className="border border-slate-200 bg-slate-50 p-4">
+            <p className="text-sm text-slate-700">Memuat hasil...</p>
+          </Card>
+        </main>
+      }
+    >
+      <ResultContent />
+    </Suspense>
   );
 }
