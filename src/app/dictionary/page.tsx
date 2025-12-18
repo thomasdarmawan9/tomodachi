@@ -132,6 +132,64 @@ const handakuten: (KanaCell | null)[][] = [
   ]
 ];
 
+const youon: KanaCell[][] = [
+  [
+    { roma: "kya", hira: "きゃ", kata: "キャ" },
+    { roma: "kyu", hira: "きゅ", kata: "キュ" },
+    { roma: "kyo", hira: "きょ", kata: "キョ" }
+  ],
+  [
+    { roma: "sha", hira: "しゃ", kata: "シャ" },
+    { roma: "shu", hira: "しゅ", kata: "シュ" },
+    { roma: "sho", hira: "しょ", kata: "ショ" }
+  ],
+  [
+    { roma: "cha", hira: "ちゃ", kata: "チャ" },
+    { roma: "chu", hira: "ちゅ", kata: "チュ" },
+    { roma: "cho", hira: "ちょ", kata: "チョ" }
+  ],
+  [
+    { roma: "nya", hira: "にゃ", kata: "ニャ" },
+    { roma: "nyu", hira: "にゅ", kata: "ニュ" },
+    { roma: "nyo", hira: "にょ", kata: "ニョ" }
+  ],
+  [
+    { roma: "hya", hira: "ひゃ", kata: "ヒャ" },
+    { roma: "hyu", hira: "ひゅ", kata: "ヒュ" },
+    { roma: "hyo", hira: "ひょ", kata: "ヒョ" }
+  ],
+  [
+    { roma: "mya", hira: "みゃ", kata: "ミャ" },
+    { roma: "myu", hira: "みゅ", kata: "ミュ" },
+    { roma: "myo", hira: "みょ", kata: "ミョ" }
+  ],
+  [
+    { roma: "rya", hira: "りゃ", kata: "リャ" },
+    { roma: "ryu", hira: "りゅ", kata: "リュ" },
+    { roma: "ryo", hira: "りょ", kata: "リョ" }
+  ],
+  [
+    { roma: "gya", hira: "ぎゃ", kata: "ギャ" },
+    { roma: "gyu", hira: "ぎゅ", kata: "ギュ" },
+    { roma: "gyo", hira: "ぎょ", kata: "ギョ" }
+  ],
+  [
+    { roma: "ja", hira: "じゃ", kata: "ジャ" },
+    { roma: "ju", hira: "じゅ", kata: "ジュ" },
+    { roma: "jo", hira: "じょ", kata: "ジョ" }
+  ],
+  [
+    { roma: "bya", hira: "びゃ", kata: "ビャ" },
+    { roma: "byu", hira: "びゅ", kata: "ビュ" },
+    { roma: "byo", hira: "びょ", kata: "ビョ" }
+  ],
+  [
+    { roma: "pya", hira: "ぴゃ", kata: "ピャ" },
+    { roma: "pyu", hira: "ぴゅ", kata: "ピュ" },
+    { roma: "pyo", hira: "ぴょ", kata: "ピョ" }
+  ]
+];
+
 const vowels = ["a", "i", "u", "e", "o"] as const;
 
 function KanaGrid({ rows, script }: { rows: (KanaCell | null)[][]; script: "hira" | "kata" }) {
@@ -269,6 +327,42 @@ export default function DictionaryPage() {
         </div>
 
         <KanaGrid rows={handakuten} script={script} />
+      </Card>
+
+      <Card className="space-y-4 border border-slate-100 p-4 shadow-sm sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              {script === "hira" ? "Youon (ゃ ゅ ょ) Hiragana" : "Youon (ャ ュ ョ) Katakana"}
+            </p>
+            <p className="text-xs text-slate-500">Kombinasi kecil ya/yu/yo (ゃ/ゅ/ょ) untuk bunyi gabungan.</p>
+          </div>
+          <p className="text-xs rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+            Kombinasi ya/yu/yo
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+          {youon.map((row, rowIdx) =>
+            row.map((cell, colIdx) => (
+              <div
+                key={`${cell.roma}-${rowIdx}-${colIdx}`}
+                className="flex h-24 flex-col justify-between rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm"
+              >
+                <div className="flex items-start justify-between text-xs uppercase tracking-wide text-slate-400">
+                  <span>{["ya", "yu", "yo"][colIdx] ?? ""}</span>
+                  <span className="font-semibold text-slate-500">{cell.roma}</span>
+                </div>
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-slate-900">
+                    {script === "hira" ? cell.hira : cell.kata}
+                  </p>
+                  <p className="text-[11px] font-medium uppercase text-slate-500">{cell.roma}</p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </Card>
     </main>
   );
