@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -105,24 +106,45 @@ export default function DictionaryPage() {
               Setiap kartu mewakili satu huruf, mudah di-scan dan diklik.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant={script === "hira" ? "primary" : "outline"}
-              className="px-4"
-              onClick={() => setScript("hira")}
-            >
-              Hiragana
+          <Link href="/">
+            <Button variant="ghost" className="h-12 w-12 p-0 text-white hover:bg-white/15">
+              <svg
+                className="h-6 w-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 10L12 3l9 7" />
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+              </svg>
             </Button>
-            <Button
-              variant={script === "kata" ? "primary" : "outline"}
-              className="px-4"
-              onClick={() => setScript("kata")}
-            >
-              Katakana
-            </Button>
-          </div>
+          </Link>
         </div>
       </header>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Pilih kategori</p>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={script === "hira" ? "primary" : "outline"}
+            className="px-4"
+            onClick={() => setScript("hira")}
+          >
+            Hiragana
+          </Button>
+          <Button
+            variant={script === "kata" ? "primary" : "outline"}
+            className="px-4"
+            onClick={() => setScript("kata")}
+          >
+            Katakana
+          </Button>
+        </div>
+      </div>
 
       <Card className="space-y-4 border border-slate-100 p-4 shadow-sm sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">

@@ -1,6 +1,72 @@
-[00:00:02.255] Server  LOG      ✓ Ready in 1971ms
-[00:00:02.259] Browser LOG     timeout   5000
-[00:00:04.787] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:04.959] Browser LOG     timeout   5000
-[00:00:04.959] Browser LOG     timeout   2500
-[00:00:11.024] Browser LOG     timeout   2500
+[00:00:02.437] Server  LOG      ✓ Ready in 2.1s
+[00:00:05.572] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:05.717] Browser LOG     timeout   5000
+[00:00:05.717] Browser LOG     timeout   2500
+[00:00:09.018] Browser LOG     timeout   2500
+[00:01:25.764] Browser ERROR   ./src/app/dictionary/page.tsx:4:1
+Module not found: Can't resolve 'lucide-react'
+  2 |
+  3 | import Link from "next/link";
+> 4 | import { HomeIcon } from "lucide-react";
+    | ^
+  5 | import { useState } from "react";
+  6 | import { Card } from "@/components/ui/card";
+  7 | import { Button } from "@/components/ui/button";
+
+https://nextjs.org/docs/messages/module-not-found
+[00:01:25.832] Server  ERROR    ⨯ ./src/app/dictionary/page.tsx:4:1
+Module not found: Can't resolve 'lucide-react'
+  2 |
+  3 | import Link from "next/link";
+> 4 | import { HomeIcon } from "lucide-react";
+    | ^
+  5 | import { useState } from "react";
+  6 | import { Card } from "@/components/ui/card";
+  7 | import { Button } from "@/components/ui/button";
+
+https://nextjs.org/docs/messages/module-not-found
+[00:01:26.669] Browser ERROR   ./src/app/dictionary/page.tsx:4:1
+Module not found: Can't resolve 'lucide-react'
+  2 |
+  3 | import Link from "next/link";
+> 4 | import { HomeIcon } from "lucide-react";
+    | ^
+  5 | import { useState } from "react";
+  6 | import { Card } from "@/components/ui/card";
+  7 | import { Button } from "@/components/ui/button";
+
+https://nextjs.org/docs/messages/module-not-found
+[00:02:42.171] Browser ERROR   ./src/app/dictionary/page.tsx:4:1
+Module not found: Can't resolve 'lucide-react'
+  2 |
+  3 | import Link from "next/link";
+> 4 | import { HomeIcon } from "lucide-react";
+    | ^
+  5 | import { useState } from "react";
+  6 | import { Card } from "@/components/ui/card";
+  7 | import { Button } from "@/components/ui/button";
+
+https://nextjs.org/docs/messages/module-not-found
+[00:02:42.962] Browser LOG     timeout   2500
+[00:02:46.448] Browser LOG     timeout   2500
+[00:02:48.885] Browser LOG     timeout   2500
+[00:03:40.670] Browser LOG     timeout   2500
+[00:03:47.670] Browser LOG     timeout   2500
+[00:04:12.303] Browser LOG     timeout   2500
+[00:04:14.191] Browser LOG     timeout   2500
+[00:04:21.764] Browser LOG     timeout   2500
+[00:04:27.040] Browser LOG     timeout   2500
+[00:04:40.051] Browser LOG     timeout   2500
+[00:04:41.487] Browser LOG     timeout   2500
+[00:05:13.670] Browser LOG     timeout   2500
+[00:05:52.652] Browser LOG     timeout   2500
+[00:05:54.358] Browser LOG     timeout   2500
+[00:05:59.209] Browser LOG     timeout   2500
+[00:06:00.677] Browser LOG     timeout   2500
+[00:06:02.981] Browser LOG     timeout   2500
+[00:06:04.389] Browser LOG     timeout   2500
+[00:06:56.418] Browser LOG     timeout   2500
+[00:07:01.769] Browser LOG     timeout   2500
+[00:07:17.656] Browser LOG     timeout   2500
+[00:07:19.018] Browser LOG     timeout   2500
+[00:07:23.199] Browser LOG     timeout   2500

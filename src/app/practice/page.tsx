@@ -210,12 +210,12 @@ function PracticeContent() {
             </Link>
             <Button
               variant="ghost"
-              className="h-10 w-10 p-0 text-white hover:bg-white/10"
+              className="h-12 w-12 p-0 text-white hover:bg-white/10"
               onClick={handleGoHome}
               aria-label="Kembali ke beranda"
             >
               <svg
-                className="h-5 w-5"
+                className="h-6 w-6"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
