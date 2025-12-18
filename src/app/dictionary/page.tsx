@@ -91,6 +91,83 @@ const gojuon: (KanaCell | null)[][] = [
   ]
 ];
 
+const dakuten: (KanaCell | null)[][] = [
+  [
+    { roma: "ga", hira: "が", kata: "ガ" },
+    { roma: "gi", hira: "ぎ", kata: "ギ" },
+    { roma: "gu", hira: "ぐ", kata: "グ" },
+    { roma: "ge", hira: "げ", kata: "ゲ" },
+    { roma: "go", hira: "ご", kata: "ゴ" }
+  ],
+  [
+    { roma: "za", hira: "ざ", kata: "ザ" },
+    { roma: "ji", hira: "じ", kata: "ジ" },
+    { roma: "zu", hira: "ず", kata: "ズ" },
+    { roma: "ze", hira: "ぜ", kata: "ゼ" },
+    { roma: "zo", hira: "ぞ", kata: "ゾ" }
+  ],
+  [
+    { roma: "da", hira: "だ", kata: "ダ" },
+    { roma: "ji", hira: "ぢ", kata: "ヂ" },
+    { roma: "zu", hira: "づ", kata: "ヅ" },
+    { roma: "de", hira: "で", kata: "デ" },
+    { roma: "do", hira: "ど", kata: "ド" }
+  ],
+  [
+    { roma: "ba", hira: "ば", kata: "バ" },
+    { roma: "bi", hira: "び", kata: "ビ" },
+    { roma: "bu", hira: "ぶ", kata: "ブ" },
+    { roma: "be", hira: "べ", kata: "ベ" },
+    { roma: "bo", hira: "ぼ", kata: "ボ" }
+  ]
+];
+
+const handakuten: (KanaCell | null)[][] = [
+  [
+    { roma: "pa", hira: "ぱ", kata: "パ" },
+    { roma: "pi", hira: "ぴ", kata: "ピ" },
+    { roma: "pu", hira: "ぷ", kata: "プ" },
+    { roma: "pe", hira: "ぺ", kata: "ペ" },
+    { roma: "po", hira: "ぽ", kata: "ポ" }
+  ]
+];
+
+const vowels = ["a", "i", "u", "e", "o"] as const;
+
+function KanaGrid({ rows, script }: { rows: (KanaCell | null)[][]; script: "hira" | "kata" }) {
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {rows.map((row, rowIdx) =>
+        row.map((cell, colIdx) =>
+          cell ? (
+            <div
+              key={`${cell.roma}-${rowIdx}-${colIdx}`}
+              className="flex h-24 flex-col justify-between rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm"
+            >
+              <div className="flex items-start justify-between text-xs uppercase tracking-wide text-slate-400">
+                <span>{vowels[colIdx] ?? ""}</span>
+                <span className="font-semibold text-slate-500">{cell.roma}</span>
+              </div>
+              <div className="text-center">
+                <p className="text-4xl font-bold text-slate-900">
+                  {script === "hira" ? cell.hira : cell.kata}
+                </p>
+                <p className="text-xs font-medium uppercase text-slate-500">{cell.roma}</p>
+              </div>
+            </div>
+          ) : (
+            <div
+              key={`placeholder-${rowIdx}-${colIdx}`}
+              aria-hidden
+              className="h-24 rounded-xl border border-dashed border-slate-100 bg-slate-50"
+            />
+          )
+        )
+      )}
+    </div>
+  );
+}
+
 export default function DictionaryPage() {
   const [script, setScript] = useState<"hira" | "kata">("hira");
 
@@ -159,31 +236,39 @@ export default function DictionaryPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {gojuon.map((row, rowIdx) =>
-            row.map((cell, colIdx) =>
-              cell ? (
-                <div
-                  key={`${cell.roma}-${rowIdx}-${colIdx}`}
-                  className="flex h-24 flex-col justify-between rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm"
-                >
-                  <div className="flex items-start justify-between text-xs uppercase tracking-wide text-slate-400">
-                    <span>{["a", "i", "u", "e", "o"][colIdx] ?? ""}</span>
-                    <span className="font-semibold text-slate-500">{cell.roma}</span>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-4xl font-bold text-slate-900">
-                      {script === "hira" ? cell.hira : cell.kata}
-                    </p>
-                    <p className="text-xs font-medium uppercase text-slate-500">{cell.roma}</p>
-                  </div>
-                </div>
-              ) : (
-                <div key={`placeholder-${rowIdx}-${colIdx}`} aria-hidden className="h-24 rounded-xl border border-dashed border-slate-100 bg-slate-50" />
-              )
-            )
-          )}
+        <KanaGrid rows={gojuon} script={script} />
+      </Card>
+
+      <Card className="space-y-4 border border-slate-100 p-4 shadow-sm sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              {script === "hira" ? "Tenten (Dakuten) Hiragana" : "Tenten (Dakuten) Katakana"}
+            </p>
+            <p className="text-xs text-slate-500">Baris ga/za/da/ba dengan titik (゛ / ゛).</p>
+          </div>
+          <p className="text-xs rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+            Variasi bersuara
+          </p>
         </div>
+
+        <KanaGrid rows={dakuten} script={script} />
+      </Card>
+
+      <Card className="space-y-4 border border-slate-100 p-4 shadow-sm sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              {script === "hira" ? "Maru (Handakuten) Hiragana" : "Maru (Handakuten) Katakana"}
+            </p>
+            <p className="text-xs text-slate-500">Baris pa dengan lingkaran kecil (゜ / ゜).</p>
+          </div>
+          <p className="text-xs rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+            Variasi p/b → p
+          </p>
+        </div>
+
+        <KanaGrid rows={handakuten} script={script} />
       </Card>
     </main>
   );
