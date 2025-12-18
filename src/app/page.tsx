@@ -15,15 +15,14 @@ import heroPerson from "@/assets/peoplehome.png";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { useAuth } from "@/lib/auth-context";
 import { ToriiIllustration } from "@/components/illustrations/Torii";
-import { fetchHistory, type PracticeAttempt } from "@/lib/practice-api";
-import { fetchNextUnit } from "@/lib/tracks-api";
-import type { TrackUnit } from "@/lib/types";
+import { loadDashboardData } from "@/lib/store/dashboard-slice";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 
 export default function HomePage() {
   const { onboardingComplete, profile } = useLearning();
   const { user, logout, token } = useAuth();
-  const [history, setHistory] = useState<PracticeAttempt[]>([]);
-  const [nextUnit, setNextUnit] = useState<TrackUnit | null>(null);
+  const dispatch = useAppDispatch();
+  const { history, nextUnit, loading: dashboardLoading, error: dashboardError } = useAppSelector((state) => state.dashboard);
   const [levelTab, setLevelTab] = useState<
     "beginner" | "n5" | "n4" | "n3" | "n2" | "n1"
   >("beginner");
@@ -44,22 +43,8 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!token) return;
-    let cancelled = false;
-    const load = async () => {
-      try {
-        const h = await fetchHistory(token);
-        if (!cancelled) setHistory(h.slice(0, 5));
-        const n = await fetchNextUnit(profile.track, token);
-        if (!cancelled) setNextUnit(n.unit || null);
-      } catch (err) {
-        console.warn("Failed to load dashboard extras", err);
-      }
-    };
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [token, profile.track]);
+    dispatch(loadDashboardData({ token, track: profile.track }));
+  }, [dispatch, token, profile.track]);
 
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 md:py-10">
@@ -147,9 +132,11 @@ export default function HomePage() {
                   <Button variant="ghost" disabled className="px-4">
                     Audio & Pelafalan (soon)
                   </Button>
-                  <Button variant="ghost" disabled className="px-4">
-                    Kamus (soon)
-                  </Button>
+                  <Link href="/dictionary">
+                    <Button variant="outline" className="px-4">
+                      Kamus
+                    </Button>
+                  </Link>
                 </div>
               </div>
               <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-amber-50 via-white to-sky-50 p-4">
@@ -165,8 +152,11 @@ export default function HomePage() {
             <Card className="space-y-2 border border-slate-100 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-slate-800">Riwayat latihan terbaru</p>
-                <Badge tone="info">{history.length} sesi</Badge>
+                <Badge tone="info">{dashboardLoading ? "Memuat..." : `${history.length} sesi`}</Badge>
               </div>
+              {dashboardError ? (
+                <p className="text-xs text-amber-700">Gagal memuat: {dashboardError}</p>
+              ) : null}
               {history.length ? (
                 <div className="space-y-1 text-sm text-slate-700">
                   {history.map((h) => (
@@ -177,6 +167,8 @@ export default function HomePage() {
                     </div>
                   ))}
                 </div>
+              ) : dashboardLoading ? (
+                <p className="text-xs text-slate-500">Memuat riwayat...</p>
               ) : (
                 <p className="text-xs text-slate-500">Belum ada sesi latihan.</p>
               )}
@@ -186,7 +178,9 @@ export default function HomePage() {
                 <p className="text-sm font-semibold text-slate-800">Lanjutkan belajar</p>
                 <Badge tone="warning">{profile.track === "beginner" ? "Beginner" : "N5"}</Badge>
               </div>
-              {nextUnit ? (
+              {dashboardLoading ? (
+                <p className="text-xs text-slate-500">Memuat rekomendasi unit berikut...</p>
+              ) : nextUnit ? (
                 <div className="rounded-lg bg-slate-50 px-3 py-2 text-sm">
                   <p className="font-semibold text-slate-800">{nextUnit.title}</p>
                   <p className="text-xs text-slate-500">Unit berikut untuk jalur aktifmu.</p>

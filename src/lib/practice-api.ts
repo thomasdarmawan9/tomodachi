@@ -27,8 +27,12 @@ export type PracticeAnswerResponse = {
   isCorrect?: boolean;
 };
 
-export async function fetchQuestions(mode: PracticeMode, token: string) {
-  return apiFetch<Question[]>(`/practice/questions?mode=${mode}`, { token });
+export async function fetchQuestions(mode: PracticeMode, token: string, opts?: { index?: number }) {
+  const params = new URLSearchParams({ mode });
+  if (typeof opts?.index === "number") {
+    params.set("index", String(opts.index));
+  }
+  return apiFetch<Question[]>(`/practice/questions?${params.toString()}`, { token });
 }
 
 export async function submitAnswers(

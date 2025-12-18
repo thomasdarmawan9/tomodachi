@@ -2,14 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useLearning } from "@/lib/learning-context";
-import { Lesson, LearningTrack, TrackKey } from "@/lib/types";
+import { Lesson, TrackKey } from "@/lib/types";
 import { useTonePlayer } from "@/hooks/useTonePlayer";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { QuizCard } from "../quiz/QuizCard";
 import { useAuth } from "@/lib/auth-context";
-import { fetchTracks, fetchUnits, updateUnitStatus } from "@/lib/tracks-api";
+import { fetchTracksThunk, persistUnitStatusThunk } from "@/lib/store/learning-slice";
+import { useAppDispatch } from "@/lib/store/hooks";
 
 function LessonRow({
   lesson,
@@ -96,41 +97,17 @@ function Slider({ lessons, onPlay }: { lessons: Lesson[]; onPlay: (hint: string)
 }
 
 export function TrackBoard({ activeTrack }: { activeTrack: TrackKey }) {
-  const { tracks, markUnit } = useLearning();
+  const { tracks, markUnit, tracksStatus, tracksError } = useLearning();
+  const dispatch = useAppDispatch();
   const { playTone } = useTonePlayer();
   const { token } = useAuth();
-  const [remoteTracks, setRemoteTracks] = useState<LearningTrack[] | null>(null);
-  const [loadingTracks, setLoadingTracks] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
-    let cancelled = false;
-    const load = async () => {
-      setLoadingTracks(true);
-      setLoadError(null);
-      try {
-        const t = await fetchTracks(token);
-        const withUnits = await Promise.all(
-          t.map(async (track) => {
-            const units = await fetchUnits(track.id, token);
-            return { ...track, units: units.map((u) => ({ ...u, lessons: u.lessons || [] })) };
-          })
-        );
-        if (!cancelled) setRemoteTracks(withUnits);
-      } catch (err) {
-        if (!cancelled) setLoadError(err instanceof Error ? err.message : "Gagal memuat track");
-      } finally {
-        if (!cancelled) setLoadingTracks(false);
-      }
-    };
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [token]);
+    dispatch(fetchTracksThunk(token));
+  }, [dispatch, token]);
 
-  const sourceTracks = remoteTracks ?? tracks;
+  const sourceTracks = tracks;
 
   const orderedTracks = useMemo(() => {
     const clone = [...sourceTracks];
@@ -142,23 +119,7 @@ export function TrackBoard({ activeTrack }: { activeTrack: TrackKey }) {
   const handleMark = async (trackId: TrackKey, unitId: string) => {
     markUnit(trackId, unitId, "completed");
     if (token) {
-      try {
-        await updateUnitStatus(unitId, "completed", token);
-        setRemoteTracks((prev) =>
-          prev?.map((t) =>
-            t.id === trackId
-              ? {
-                  ...t,
-                  units: t.units.map((u) =>
-                    u.id === unitId ? { ...u, status: "completed" } : u
-                  )
-                }
-              : t
-          ) ?? null
-        );
-      } catch (err) {
-        console.error("Gagal update status unit", err);
-      }
+      void dispatch(persistUnitStatusThunk({ trackId, unitId, status: "completed", token }));
     }
   };
 
@@ -174,15 +135,15 @@ export function TrackBoard({ activeTrack }: { activeTrack: TrackKey }) {
 
   return (
     <div className="space-y-4">
-      {loadingTracks ? (
+      {tracksStatus === "loading" ? (
         <Card className="border border-slate-200 bg-slate-50 p-4">
           <p className="text-sm font-semibold text-slate-800">Memuat track dari server…</p>
         </Card>
       ) : null}
-      {loadError ? (
+      {tracksError ? (
         <Card className="border border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-semibold text-amber-800">Gagal memuat track</p>
-          <p className="text-xs text-amber-800/80">{loadError}</p>
+          <p className="text-xs text-amber-800/80">{tracksError}</p>
         </Card>
       ) : null}
       {visibleTracks.map((track) => {

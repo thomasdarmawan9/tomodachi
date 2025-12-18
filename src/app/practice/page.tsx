@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLearning } from "@/lib/learning-context";
 import { Badge } from "@/components/ui/badge";
@@ -79,6 +79,10 @@ function PracticeContent() {
   const total = questions.length || 10;
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === total && !loadingQuestions;
+  const questionIndex = useMemo(
+    () => (isKanjiMode ? Math.floor(Math.random() * 1000) : undefined),
+    [isKanjiMode]
+  );
 
   const handleSubmit = async () => {
     if (!questions.length) return;
@@ -135,7 +139,9 @@ function PracticeContent() {
       setLoadingQuestions(true);
       setLoadError(null);
       try {
-        const data = isPlacement ? await fetchPlacementQuestions(token) : await fetchQuestions(mode, token);
+        const data = isPlacement
+          ? await fetchPlacementQuestions(token)
+          : await fetchQuestions(mode, token, { index: questionIndex });
         // Randomize choices so jawaban benar tidak selalu di posisi pertama.
         const shuffled = data.map((q) => {
           const choices = [...q.choices];
@@ -146,7 +152,7 @@ function PracticeContent() {
           return { ...q, choices };
         });
         if (!cancelled) {
-          setQuestions(shuffled.slice(0, 10));
+          setQuestions(shuffled);
           setAnswers({});
           setCurrent(0);
         }
@@ -161,7 +167,7 @@ function PracticeContent() {
     return () => {
       cancelled = true;
     };
-  }, [isPlacement, mode, token, user]);
+  }, [isPlacement, mode, token, user, questionIndex]);
 
   if (!user && !authLoading) {
     return (

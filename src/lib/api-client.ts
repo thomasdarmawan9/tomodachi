@@ -8,7 +8,10 @@ type FetchOptions = {
 };
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://running-abbie-tomodachi-9225d0c4.koyeb.app/api/v1";
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  (process.env.NODE_ENV !== "production"
+    ? "http://localhost:8080/api/v1"
+    : "https://running-abbie-tomodachi-9225d0c4.koyeb.app/api/v1");
 
 export async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
   const { method = "GET", body, token, headers = {} } = options;

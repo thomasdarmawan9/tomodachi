@@ -52,6 +52,13 @@ function ResultContent() {
   const level = params.get("level") || "beginner";
   const passed = score >= 8;
 
+  const levelLabel = useMemo(() => {
+    if (level === "beginner" || level === "placement") return "Beginner";
+    if (level === "n5" || level === "kanji") return "N5";
+    return level.toUpperCase();
+  }, [level]);
+  const isBeginnerMode = levelLabel === "Beginner";
+
   const [details, setDetails] = useState<AnswerDetail[]>([]);
   const [detailLoaded, setDetailLoaded] = useState(false);
 
@@ -80,6 +87,12 @@ function ResultContent() {
     [passed]
   );
 
+  const retryHref = useMemo(() => {
+    // Keep user on the same mode they just finished so "Coba lagi" repeats the test.
+    if (isBeginnerMode) return "/practice";
+    return `/practice?mode=${level}`;
+  }, [isBeginnerMode, level]);
+
   const incorrect = useMemo(() => details.filter((item) => !item.isCorrect), [details]);
 
   if (!user && !authLoading) {
@@ -100,7 +113,7 @@ function ResultContent() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm uppercase tracking-wide text-white/80">Step 3 · Hasil Latihan</p>
-            <h1 className="text-3xl font-bold">Result {level === "beginner" ? "Beginner (Kana)" : "N5"}</h1>
+            <h1 className="text-3xl font-bold">Result {levelLabel}</h1>
             <p className="text-sm text-white/85">
               Skor di atas 8/10 dianggap lulus dan bisa lanjut ke level berikutnya.
             </p>
@@ -114,7 +127,7 @@ function ResultContent() {
         <div className="space-y-2">
           <p className="text-lg font-semibold text-slate-900">{statusText}</p>
           <p className="text-sm text-slate-600">
-            Level: {level === "beginner" ? "Beginner (Kana)" : "N5"} · Lulus jika 8/10 atau lebih.
+            Level: {levelLabel} · Lulus jika 8/10 atau lebih.
           </p>
           <div className="flex flex-wrap gap-2">
             <Link href="/">
@@ -125,7 +138,7 @@ function ResultContent() {
                 Ke Beranda
               </Button>
             </Link>
-            <Link href="/practice">
+            <Link href={retryHref}>
               <Button variant="outline" className="px-4">
                 Coba lagi
               </Button>

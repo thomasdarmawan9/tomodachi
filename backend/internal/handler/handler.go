@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -240,6 +241,14 @@ func (h *Handler) UpdateUnitStatus(c *gin.Context) {
 
 func (h *Handler) GetQuestions(c *gin.Context) {
 	mode := c.Query("mode")
+	index := c.Query("index")
+	seed := time.Now().UnixNano()
+	if index != "" {
+		if parsed, err := strconv.ParseInt(index, 10, 64); err == nil {
+			seed = parsed
+		}
+	}
+
 	track := practice.ModeToTrack(mode)
 	qType := practice.ModeToQuestionType(mode)
 
@@ -247,11 +256,14 @@ func (h *Handler) GetQuestions(c *gin.Context) {
 	if qType == model.QKanji {
 		// Build kanji questions dynamically from kanji_entries table.
 		var entries []model.KanjiEntry
-		if err := h.db.WithContext(c.Request.Context()).Limit(30).Find(&entries).Error; err != nil {
+		if err := h.db.WithContext(c.Request.Context()).
+			Order("id").
+			Limit(200).
+			Find(&entries).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch kanji entries"})
 			return
 		}
-		questions = practice.BuildKanjiQuestions(entries, 10)
+		questions = practice.BuildKanjiQuestions(entries, 10, seed)
 	} else {
 		query := h.db.WithContext(c.Request.Context()).
 			Order("RANDOM()"). // randomize to mix hiragana/katakana pools
