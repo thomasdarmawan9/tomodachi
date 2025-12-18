@@ -1,10 +1,10 @@
-// File: /Users/thomasdarmawan/Documents/github/tomodachi/src/app/dictionary/page.tsx
-import * as entry from '../../../../../src/app/dictionary/page.js'
+// File: /Users/thomasdarmawan/Documents/github/tomodachi/src/app/practice/page.tsx
+import * as entry from '../../../../../src/app/practice/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
 import type { PrefetchForTypeCheckInternal } from 'next/dist/build/segment-config/app/app-segment-config.js'
 
-type TEntry = typeof import('../../../../../src/app/dictionary/page.js')
+type TEntry = typeof import('../../../../../src/app/practice/page.js')
 
 type SegmentParams<T extends Object = any> = T extends Record<string, any>
   ? { [K in keyof T]: T[K] extends string ? string | string[] | undefined : never }

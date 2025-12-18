@@ -50,6 +50,11 @@ export async function fetchHistory(token: string) {
   return apiFetch<PracticeAttempt[]>("/practice/history", { token });
 }
 
-export async function fetchPlacementQuestions(token: string) {
-  return apiFetch<Question[]>("/placement/questions", { token });
+export async function fetchPlacementQuestions(token: string, opts?: { index?: number }) {
+  const params = new URLSearchParams();
+  if (typeof opts?.index === "number") {
+    params.set("index", String(opts.index));
+  }
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  return apiFetch<Question[]>(`/placement/questions${suffix}`, { token });
 }

@@ -43,7 +43,7 @@ export function AuthCard() {
   };
 
   return (
-    <Card className="border border-slate-100 bg-white p-5 shadow-card">
+    <Card className="relative overflow-hidden border border-slate-100 bg-white p-5 shadow-card">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="space-y-1">
           <p className="text-sm font-semibold text-slate-900">{title}</p>
@@ -54,7 +54,8 @@ export function AuthCard() {
             className={`rounded-full px-3 py-1 transition ${
               mode === "login" ? "bg-white text-slate-900 shadow" : ""
             }`}
-            onClick={() => setMode("login")}
+            onClick={() => !loading && setMode("login")}
+            disabled={loading}
           >
             Masuk
           </button>
@@ -62,7 +63,8 @@ export function AuthCard() {
             className={`rounded-full px-3 py-1 transition ${
               mode === "signup" ? "bg-white text-slate-900 shadow" : ""
             }`}
-            onClick={() => setMode("signup")}
+            onClick={() => !loading && setMode("signup")}
+            disabled={loading}
           >
             Daftar
           </button>
@@ -73,7 +75,13 @@ export function AuthCard() {
         {mode === "signup" ? (
           <div className="space-y-1">
             <label className="text-xs font-semibold text-slate-600">Nama</label>
-            <Input placeholder="Nama tampilan" value={name} onChange={(e) => setName(e.target.value)} required />
+            <Input
+              placeholder="Nama tampilan"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              disabled={loading}
+            />
           </div>
         ) : null}
         <div className="space-y-1">
@@ -84,6 +92,7 @@ export function AuthCard() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
         <div className="space-y-1">
@@ -95,6 +104,7 @@ export function AuthCard() {
             onChange={(e) => setPassword(e.target.value)}
             minLength={6}
             required
+            disabled={loading}
           />
         </div>
         {error ? <p className="text-xs font-semibold text-amber-700">Error: {error}</p> : null}
@@ -106,6 +116,32 @@ export function AuthCard() {
       <p className="mt-2 text-[11px] text-slate-500">
         Dengan membuat akun, progres XP, streak, dan latihanmu akan tersimpan.
       </p>
+      {loading ? (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/80 backdrop-blur-[1px]">
+          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-brand-100 bg-brand-50">
+            <svg
+              className="h-7 w-7 animate-spin text-brand-600"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 2v4" />
+              <path d="M12 18v4" />
+              <path d="m4.93 4.93 2.83 2.83" />
+              <path d="m16.24 16.24 2.83 2.83" />
+              <path d="M2 12h4" />
+              <path d="M18 12h4" />
+              <path d="m4.93 19.07 2.83-2.83" />
+              <path d="m16.24 7.76 2.83-2.83" />
+            </svg>
+          </div>
+          <p className="text-sm font-semibold text-slate-700">Memproses...</p>
+        </div>
+      ) : null}
     </Card>
   );
 }

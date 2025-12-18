@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLearning } from "@/lib/learning-context";
 import { Badge } from "@/components/ui/badge";
@@ -16,12 +16,14 @@ function QuestionCard({
   question,
   index,
   selected,
-  onSelect
+  onSelect,
+  disabled
 }: {
   question: Question;
   index: number;
   selected?: string;
   onSelect: (choice: string) => void;
+  disabled?: boolean;
 }) {
   const letters = ["A", "B", "C", "D"];
   const isKanjiQuestion = question.type === "kanji";
@@ -47,9 +49,14 @@ function QuestionCard({
             <button
               key={choice}
               className={`${base} ${
-                active ? "border-brand-500 bg-brand-50 text-brand-800" : "border-slate-200 bg-white hover:border-slate-300"
+                disabled
+                  ? "border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed"
+                  : active
+                    ? "border-brand-500 bg-brand-50 text-brand-800"
+                    : "border-slate-200 bg-white hover:border-slate-300"
               }`}
-              onClick={() => onSelect(choice)}
+              onClick={() => !disabled && onSelect(choice)}
+              disabled={disabled}
             >
               <span className="text-sm font-bold text-brand-600">{letters[idx]}.</span>
               <span className="text-slate-900">{choice}</span>
@@ -75,18 +82,34 @@ function PracticeContent() {
   const [current, setCurrent] = useState(0);
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const autoSubmitRef = useRef(false);
+  const [showPlacementIntro, setShowPlacementIntro] = useState(isPlacement);
 
   const total = questions.length || 10;
   const answeredCount = Object.keys(answers).length;
-  const canSubmit = answeredCount === total && !loadingQuestions;
-  const questionIndex = useMemo(
-    () => (isKanjiMode ? Math.floor(Math.random() * 1000) : undefined),
-    [isKanjiMode]
-  );
+  const isTimeUp = isPlacement && timeLeft !== null && timeLeft <= 0;
+  const canSubmit =
+    (!isTimeUp && answeredCount === total && !loadingQuestions && !submitting) ||
+    (isPlacement && isTimeUp && !loadingQuestions && !submitting);
+  const questionIndex = useMemo(() => {
+    const paramIndex = searchParams.get("index");
+    if (paramIndex) {
+      const parsed = Number(paramIndex);
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+    if (isKanjiMode || isPlacement) return Math.floor(Math.random() * 1000);
+    return undefined;
+  }, [isKanjiMode, isPlacement, searchParams]);
 
-  const handleSubmit = async () => {
+  const mode: "kanji" | "beginner" | "n5" | "placement" =
+    searchParams.get("mode") === "placement" ? "placement" : isKanjiMode ? "kanji" : isBeginner ? "beginner" : "n5";
+
+  const handleSubmit = useCallback(async () => {
     if (!questions.length) return;
     if (!token) return;
+    if (submitting) return;
     const level = mode;
 
     const payload = questions.map((q) => ({
@@ -95,6 +118,7 @@ function PracticeContent() {
     }));
 
     try {
+      setSubmitting(true);
       const resp = await submitAnswers(level, payload, token);
 
       const detailedAnswers = (resp.answers || []).map((item, idx: number) => ({
@@ -118,8 +142,10 @@ function PracticeContent() {
     } catch (err) {
       console.error("Submit gagal", err);
       alert(err instanceof Error ? err.message : "Gagal mengirim jawaban");
+    } finally {
+      setSubmitting(false);
     }
-  };
+  }, [answers, mode, questions, router, submitting, token]);
 
   const handleGoHome = () => {
     const proceed = window.confirm("Jawaban tidak akan tersimpan. Yakin ingin kembali ke beranda?");
@@ -127,10 +153,13 @@ function PracticeContent() {
     router.push("/");
   };
 
+  const handleStartPlacement = () => {
+    setShowPlacementIntro(false);
+    setTimeLeft(600);
+  };
+
   const activeQuestion = questions[current];
-  const levelLabel = isPlacement ? "Placement Beginner" : isKanjiMode ? "Kanji N5" : isBeginner ? "Beginner (Kana)" : "N5 Dasar";
-  const mode: "kanji" | "beginner" | "n5" | "placement" =
-    searchParams.get("mode") === "placement" ? "placement" : isKanjiMode ? "kanji" : isBeginner ? "beginner" : "n5";
+  const levelLabel = isPlacement ? "Final Test Beginner" : isKanjiMode ? "Kanji N5" : isBeginner ? "Beginner (Kana)" : "N5 Dasar";
 
   useEffect(() => {
     if (!user || !token) return;
@@ -138,9 +167,10 @@ function PracticeContent() {
     const load = async () => {
       setLoadingQuestions(true);
       setLoadError(null);
+      autoSubmitRef.current = false;
       try {
         const data = isPlacement
-          ? await fetchPlacementQuestions(token)
+          ? await fetchPlacementQuestions(token, { index: questionIndex })
           : await fetchQuestions(mode, token, { index: questionIndex });
         // Randomize choices so jawaban benar tidak selalu di posisi pertama.
         const shuffled = data.map((q) => {
@@ -155,6 +185,7 @@ function PracticeContent() {
           setQuestions(shuffled);
           setAnswers({});
           setCurrent(0);
+          setTimeLeft(isPlacement ? (showPlacementIntro ? null : 600) : null);
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Gagal memuat soal";
@@ -168,6 +199,32 @@ function PracticeContent() {
       cancelled = true;
     };
   }, [isPlacement, mode, token, user, questionIndex]);
+
+  useEffect(() => {
+    if (!isPlacement || showPlacementIntro || timeLeft === null) return;
+    if (timeLeft <= 0) {
+      if (!autoSubmitRef.current) {
+        autoSubmitRef.current = true;
+        void handleSubmit();
+      }
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setTimeLeft((prev) => (prev === null ? prev : Math.max(0, prev - 1)));
+    }, 1000);
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [handleSubmit, isPlacement, showPlacementIntro, timeLeft]);
+
+  const formattedTime = useMemo(() => {
+    if (timeLeft === null) return null;
+    const minutes = Math.floor(timeLeft / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = (timeLeft % 60).toString().padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  }, [timeLeft]);
 
   if (!user && !authLoading) {
     return (
@@ -184,22 +241,22 @@ function PracticeContent() {
   }
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 md:gap-5 md:py-10">
+    <main className="relative mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 md:gap-5 md:py-10">
       <header className="rounded-2xl bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 px-4 py-5 text-white shadow-card sm:px-5 sm:py-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-wide text-white/80">Step 2 · {isKanjiMode ? "Latihan Kanji" : "Latihan Inti"}</p>
-            <h1 className="text-2xl font-bold sm:text-3xl">{isPlacement ? "Placement Test" : `Latihan ${levelLabel}`}</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl">{isPlacement ? "Final Test" : `Latihan ${levelLabel}`}</h1>
             <p className="text-sm leading-relaxed text-white/85">
               {isKanjiMode
                 ? "Mode kanji: tebak bacaan hiragana + arti bahasa Indonesia untuk tiap kanji. Soal diambil acak dari bank Kanji N5."
                 : isPlacement
-                  ? "Placement beginner: konversi kata/kalimat hiragana/katakana ↔ romaji untuk cek dasar sebelum mulai."
+                  ? "Final test beginner: konversi kata/kalimat hiragana/katakana ↔ romaji untuk cek penguasaan kana."
                   : "Mode latihan disesuaikan dengan jalur yang dipilih di onboarding. Ubah jalur di halaman utama jika perlu."}
             </p>
           </div>
           <div className="flex items-center gap-2 md:self-start">
-            <Badge tone="warning">{isPlacement ? "Placement" : isKanjiMode ? "Kanji" : isBeginner ? "Beginner" : "N5"}</Badge>
+            <Badge tone="warning">{isPlacement ? "Final Test" : isKanjiMode ? "Kanji" : isBeginner ? "Beginner" : "N5"}</Badge>
             <Link href="/">
               <Button
                 variant="ghost"
@@ -242,11 +299,22 @@ function PracticeContent() {
               {isKanjiMode
                 ? "Kanji: baca (hiragana) + arti bahasa Indonesia"
                 : isPlacement
-                  ? "Placement: konversi kata/kalimat kana ↔ romaji"
+                  ? "Final test: konversi kata/kalimat kana ↔ romaji · Waktu 10 menit"
                   : "Matching, typing, ordering sesuai level"}
             </p>
           </div>
-          <Badge tone="info">Level: {levelLabel}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge tone="info">Level: {levelLabel}</Badge>
+            {isPlacement && formattedTime ? (
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-full border text-sm font-semibold ${
+                  isTimeUp ? "border-amber-200 bg-amber-50 text-amber-800" : "border-brand-100 bg-brand-50 text-brand-700"
+                }`}
+              >
+                {formattedTime}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {loadingQuestions ? (
@@ -288,6 +356,7 @@ function PracticeContent() {
               index={current}
               selected={answers[activeQuestion.id]}
               onSelect={(choice) => setAnswers((prev) => ({ ...prev, [activeQuestion.id]: choice }))}
+              disabled={isTimeUp}
             />
             <div className="flex flex-col gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-slate-700">
@@ -324,6 +393,36 @@ function PracticeContent() {
           </div>
         ) : null}
       </section>
+
+      {isPlacement && showPlacementIntro ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Final Test Beginner</p>
+                <h2 className="text-2xl font-bold text-slate-900">Panduan singkat sebelum mulai</h2>
+              </div>
+              <ul className="space-y-2 text-sm text-slate-700">
+                <li>• 30 soal acak fokus konversi hiragana/katakana ↔ romaji.</li>
+                <li>• Waktu 10 menit untuk menyelesaikan semua soal.</li>
+                <li>• Jawab secepat mungkin; waktu habis akan otomatis mengirim jawaban yang ada.</li>
+                <li>• Hasil dipakai untuk menentukan level awal belajar kana.</li>
+              </ul>
+              <p className="text-xs text-slate-500">
+                Tips: pastikan keyboard siap (Latin) dan koneksi stabil. Kamu bisa ulangi final test jika perlu.
+              </p>
+            </div>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <Button variant="outline" onClick={() => router.push("/")}>
+                Kembali
+              </Button>
+              <Button variant="primary" onClick={handleStartPlacement}>
+                Mulai Sekarang
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }

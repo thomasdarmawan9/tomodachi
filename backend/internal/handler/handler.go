@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -301,16 +302,25 @@ func (h *Handler) PracticeHistory(c *gin.Context) {
 }
 
 func (h *Handler) PlacementQuestions(c *gin.Context) {
+	seed := time.Now().UnixNano()
+	if idx := c.Query("index"); idx != "" {
+		if parsed, err := strconv.ParseInt(idx, 10, 64); err == nil {
+			seed = parsed
+		}
+	}
+
 	var questions []model.Question
 	if err := h.db.WithContext(c.Request.Context()).
 		Where("track = ?", "placement").
-		Order("RANDOM()").
-		Limit(40).
+		Order("id").
+		Limit(200).
 		Find(&questions).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch placement questions"})
 		return
 	}
-	c.JSON(http.StatusOK, practice.PickRandom(questions, 10))
+
+	r := rand.New(rand.NewSource(seed))
+	c.JSON(http.StatusOK, practice.PickRandomWithRand(questions, 30, r))
 }
 
 type practiceSubmitRequest struct {

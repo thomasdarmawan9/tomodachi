@@ -1,6 +1,85 @@
-[00:00:02.228] Server  LOG      ✓ Ready in 1932ms
-[00:00:07.664] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:07.812] Browser LOG     timeout   5000
-[00:00:07.812] Browser LOG     timeout   2500
-[00:00:11.256] Browser LOG     timeout   2500
-[00:02:05.462] Browser LOG     timeout   2500
+[00:00:02.440] Server  LOG      ✓ Ready in 2.1s
+[00:00:02.464] Browser LOG     timeout   5000
+[00:00:05.078] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:05.238] Browser LOG     timeout   5000
+[00:00:05.238] Browser LOG     timeout   2500
+[00:00:22.474] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:22.605] Browser LOG     timeout   5000
+[00:00:22.605] Browser LOG     timeout   2500
+[00:00:27.228] Browser LOG     timeout   2500
+[00:00:29.277] Browser LOG     timeout   1000
+[00:00:30.285] Browser LOG     timeout   1000
+[00:00:31.294] Browser LOG     timeout   1000
+[00:00:34.088] Browser LOG     timeout   1000
+[00:00:34.088] Browser LOG     timeout   2500
+[00:00:42.302] Browser LOG     timeout   2500
+[00:00:43.823] Browser LOG     timeout   1000
+[00:00:44.834] Browser LOG     timeout   1000
+[00:00:45.844] Browser LOG     timeout   1000
+[00:00:46.856] Browser LOG     timeout   1000
+[00:00:47.866] Browser LOG     timeout   1000
+[00:00:48.875] Browser LOG     timeout   1000
+[00:00:49.884] Browser LOG     timeout   1000
+[00:00:50.895] Browser LOG     timeout   1000
+[00:00:51.904] Browser LOG     timeout   1000
+[00:00:52.911] Browser LOG     timeout   1000
+[00:00:57.546] Browser LOG     timeout   1000
+[00:00:57.546] Browser LOG     timeout   2500
+[00:04:12.344] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:04:12.494] Browser LOG     timeout   5000
+[00:04:12.494] Browser LOG     timeout   2500
+[00:04:15.714] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:04:15.858] Browser LOG     timeout   5000
+[00:04:15.858] Browser LOG     timeout   2500
+[00:04:21.779] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:04:21.908] Browser LOG     timeout   5000
+[00:04:21.908] Browser LOG     timeout   2500
+[00:04:50.175] Browser LOG     timeout   2500
+[00:04:59.072] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:04:59.221] Browser LOG     timeout   5000
+[00:04:59.221] Browser LOG     timeout   2500
+[00:05:00.316] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:00.448] Browser LOG     timeout   5000
+[00:05:00.448] Browser LOG     timeout   2500
+[00:05:03.847] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:03.990] Browser LOG     timeout   5000
+[00:05:03.990] Browser LOG     timeout   2500
+[00:05:07.678] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:07.807] Browser LOG     timeout   5000
+[00:05:07.807] Browser LOG     timeout   2500
+[00:05:19.300] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:19.431] Browser LOG     timeout   5000
+[00:05:19.431] Browser LOG     timeout   2500
+[00:05:20.581] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:20.708] Browser LOG     timeout   5000
+[00:05:20.708] Browser LOG     timeout   2500
+[00:05:22.457] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:22.584] Browser LOG     timeout   5000
+[00:05:22.584] Browser LOG     timeout   2500
+[00:05:24.399] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:24.525] Browser LOG     timeout   5000
+[00:05:24.525] Browser LOG     timeout   2500
+[00:05:32.217] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:32.350] Browser LOG     timeout   5000
+[00:05:32.350] Browser LOG     timeout   2500
+[00:05:33.468] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:33.606] Browser LOG     timeout   5000
+[00:05:33.606] Browser LOG     timeout   2500
+[00:05:35.165] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:35.296] Browser LOG     timeout   5000
+[00:05:35.296] Browser LOG     timeout   2500
+[00:05:37.728] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:37.856] Browser LOG     timeout   5000
+[00:05:37.856] Browser LOG     timeout   2500
+[00:05:41.204] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:41.338] Browser LOG     timeout   5000
+[00:05:41.338] Browser LOG     timeout   2500
+[00:05:43.538] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:43.690] Browser LOG     timeout   5000
+[00:05:43.690] Browser LOG     timeout   2500
+[00:05:46.304] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:46.438] Browser LOG     timeout   5000
+[00:05:46.438] Browser LOG     timeout   2500
+[00:05:50.215] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:50.215] Browser LOG     timeout   2500
+[00:05:50.380] Browser LOG     timeout   5000

@@ -19,7 +19,7 @@ import { loadDashboardData } from "@/lib/store/dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 
 export default function HomePage() {
-  const { onboardingComplete, profile } = useLearning();
+  const { onboardingComplete, profile, setOnboardingComplete } = useLearning();
   const { user, logout, token } = useAuth();
   const dispatch = useAppDispatch();
   const { history, nextUnit, loading: dashboardLoading, error: dashboardError } = useAppSelector((state) => state.dashboard);
@@ -76,9 +76,18 @@ export default function HomePage() {
               <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white/85">
                 {user?.email}
               </span>
-              <Button variant="outline" className="bg-white/10 text-white hover:bg-white/20" onClick={logout}>
-                Logout
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="bg-white/10 text-white hover:bg-white/20"
+                  onClick={() => setOnboardingComplete(false)}
+                >
+                  Ganti preferensi
+                </Button>
+                <Button variant="outline" className="bg-white/10 text-white hover:bg-white/20" onClick={logout}>
+                  Logout
+                </Button>
+              </div>
             </div>
           ) : null}
         </div>
@@ -109,7 +118,9 @@ export default function HomePage() {
                   <p className="text-sm font-semibold text-slate-800">Latihan Inti</p>
                 </div>
                 <p className="text-sm text-slate-600">
-                  Mulai latihan sesuai jalur (Beginner kana atau N5). Audio & Pelafalan serta Kamus menyusul.
+                  Mulai latihan sesuai jalur. Pilih "Final Test" untuk menguji kemampuanmu dan menyesuaikan
+                  jalur belajar. <br></br>
+                  困難は成長の機会だ - Kesulitan adalah kesempatan untuk bertumbuh.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Link href="/practice">
@@ -119,7 +130,7 @@ export default function HomePage() {
                   </Link>
                   <Link href="/practice?mode=placement">
                     <Button variant="outline" className="px-4">
-                      Placement Test
+                      Final Test
                     </Button>
                   </Link>
                   {isN5Track ? (

@@ -6,6 +6,8 @@ import { SkillFocus, TrackKey } from "@/lib/types";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
+import { useAuth } from "@/lib/auth-context";
+import { completeOnboardingApi, updateProfileApi } from "@/lib/profile-api";
 
 const skillOptions: { value: SkillFocus; label: string }[] = [
   { value: "reading", label: "Reading" },
@@ -15,11 +17,13 @@ const skillOptions: { value: SkillFocus; label: string }[] = [
 ];
 
 export function OnboardingPanel() {
-  const { profile, updateProfile, completeOnboarding } = useLearning();
+  const { profile, updateProfile, completeOnboarding, setProfile, setOnboardingComplete } = useLearning();
+  const { token } = useAuth();
   const [localName, setLocalName] = useState(profile.name);
   const [targetMinutes, setTargetMinutes] = useState(profile.targetMinutes);
   const [selectedFocuses, setSelectedFocuses] = useState<SkillFocus[]>(profile.focuses);
   const [track, setTrack] = useState<TrackKey>(profile.track);
+  const [saving, setSaving] = useState(false);
 
   const toggleFocus = (focus: SkillFocus) => {
     setSelectedFocuses((prev) =>
@@ -27,14 +31,37 @@ export function OnboardingPanel() {
     );
   };
 
-  const handleSave = () => {
-    updateProfile({
+  const handleSave = async () => {
+    const payload = {
       name: localName || profile.name,
       track,
       targetMinutes,
       focuses: selectedFocuses
-    });
-    completeOnboarding();
+    };
+
+    if (!token) {
+      updateProfile(payload);
+      completeOnboarding();
+      setOnboardingComplete(true);
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const updated = await updateProfileApi(payload, token);
+      setProfile(updated);
+      setOnboardingComplete(true);
+      completeOnboarding();
+      await completeOnboardingApi(token);
+    } catch (err) {
+      // Fallback to local update if server fails so user progress not blocked.
+      updateProfile(payload);
+      completeOnboarding();
+      setOnboardingComplete(true);
+      alert(err instanceof Error ? err.message : "Gagal menyimpan preferensi");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -135,8 +162,8 @@ export function OnboardingPanel() {
             {profile.name} · {profile.focuses.join(", ")} · {profile.targetMinutes}m/hari
           </p>
         </div>
-        <Button className="px-4" onClick={handleSave}>
-          Simpan preferensi
+        <Button className="px-4" onClick={handleSave} disabled={saving}>
+          {saving ? "Menyimpan..." : "Simpan preferensi"}
         </Button>
       </div>
     </Card>
