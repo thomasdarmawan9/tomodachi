@@ -90,7 +90,7 @@ function ResultContent() {
   const retryHref = useMemo(() => {
     // Keep user on the same mode they just finished so "Coba lagi" repeats the test.
     if (isBeginnerMode) return "/practice";
-    return `/practice?mode=${level}`;
+    return { pathname: "/practice", query: { mode: level } };
   }, [isBeginnerMode, level]);
 
   const incorrect = useMemo(() => details.filter((item) => !item.isCorrect), [details]);
