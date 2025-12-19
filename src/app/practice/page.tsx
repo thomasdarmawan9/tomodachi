@@ -198,7 +198,7 @@ function PracticeContent() {
     return () => {
       cancelled = true;
     };
-  }, [isPlacement, mode, token, user, questionIndex]);
+  }, [isPlacement, mode, showPlacementIntro, token, user, questionIndex]);
 
   useEffect(() => {
     if (!isPlacement || showPlacementIntro || timeLeft === null) return;

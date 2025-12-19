@@ -118,7 +118,7 @@ export default function HomePage() {
                   <p className="text-sm font-semibold text-slate-800">Latihan Inti</p>
                 </div>
                 <p className="text-sm text-slate-600">
-                  Mulai latihan sesuai jalur. Pilih "Final Test" untuk menguji kemampuanmu dan menyesuaikan
+                  Mulai latihan sesuai jalur. Pilih &quot;Final Test&quot; untuk menguji kemampuanmu dan menyesuaikan
                   jalur belajar. <br></br>
                   困難は成長の機会だ - Kesulitan adalah kesempatan untuk bertumbuh.
                 </p>
@@ -172,7 +172,12 @@ export default function HomePage() {
                 <div className="space-y-1 text-sm text-slate-700">
                   {history.map((h) => (
                     <div key={h.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
-                      <span>{new Date(h.createdAt || h.created_at || h.CreatedAt || Date.now()).toLocaleDateString()}</span>
+                      <span>
+                        {(() => {
+                          const createdAt = h.createdAt || h.created_at || h.CreatedAt;
+                          return createdAt ? new Date(createdAt).toLocaleDateString() : "Tanggal tidak tersedia";
+                        })()}
+                      </span>
                       <span className="font-semibold">{h.score}/{h.total}</span>
                       <span className="text-xs uppercase text-slate-500">{h.mode}</span>
                     </div>
