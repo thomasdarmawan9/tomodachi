@@ -1,4 +1,5 @@
-[00:00:02.303] Server  LOG      ✓ Ready in 1978ms
-[00:00:05.823] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:06.867] Browser LOG     timeout   5000
-[00:00:06.867] Browser LOG     timeout   2500
+[00:00:01.182] Server  LOG      ✓ Ready in 882ms
+[00:00:05.359] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:05.457] Browser LOG     timeout   5000
+[00:00:07.092] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:07.193] Browser LOG     timeout   5000

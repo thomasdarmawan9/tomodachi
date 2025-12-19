@@ -5,6 +5,10 @@ type FetchOptions = {
   body?: unknown;
   token?: string | null;
   headers?: Record<string, string>;
+  /**
+   * Force a specific cache mode. Defaults to "no-store" to avoid stale data in client fetches.
+   */
+  cache?: RequestCache;
 };
 
 const BASE_URL =
@@ -14,9 +18,10 @@ const BASE_URL =
     : "https://running-abbie-tomodachi-9225d0c4.koyeb.app/api/v1");
 
 export async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
-  const { method = "GET", body, token, headers = {} } = options;
+  const { method = "GET", body, token, headers = {}, cache = "no-store" } = options;
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
+    cache,
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

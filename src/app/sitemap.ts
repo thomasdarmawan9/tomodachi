@@ -6,17 +6,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: `${siteUrl}/`,
-      changefreq: "daily",
+      changeFrequency: "daily",
       priority: 1
     },
     {
       url: `${siteUrl}/practice`,
-      changefreq: "weekly",
+      changeFrequency: "weekly",
       priority: 0.8
     },
     {
       url: `${siteUrl}/dictionary`,
-      changefreq: "weekly",
+      changeFrequency: "weekly",
       priority: 0.6
     }
   ];
