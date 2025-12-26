@@ -37,6 +37,9 @@ type signupRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
 	Name     string `json:"name" binding:"required"`
+	Age      int    `json:"age" binding:"required,min=13,max=120"`
+	Country  string `json:"country" binding:"required"`
+	Gender   string `json:"gender" binding:"required,oneof=male female"`
 }
 
 func (h *Handler) SignUp(c *gin.Context) {
@@ -46,7 +49,18 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	user, token, err := h.authSvc.SignUp(c.Request.Context(), h.db, req.Email, req.Password, req.Name)
+	name := strings.TrimSpace(req.Name)
+	if name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
+		return
+	}
+	country := strings.TrimSpace(req.Country)
+	if country == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "country is required"})
+		return
+	}
+	gender := strings.ToLower(req.Gender)
+	user, token, err := h.authSvc.SignUp(c.Request.Context(), h.db, req.Email, req.Password, name, req.Age, country, gender)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -57,7 +71,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 
 type loginRequest struct {
 	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Password string `json:"password" binding:"required,min=6"`
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -103,6 +117,9 @@ type updateProfileRequest struct {
 	Track         *model.TrackKey `json:"track"`
 	TargetMinutes *int            `json:"targetMinutes"`
 	Focuses       *[]string       `json:"focuses"`
+	Age           *int            `json:"age" binding:"omitempty,min=13,max=120"`
+	Country       *string         `json:"country"`
+	Gender        *string         `json:"gender" binding:"omitempty,oneof=male female"`
 }
 
 func (h *Handler) GetProfile(c *gin.Context) {
@@ -145,6 +162,15 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 	}
 	if req.Focuses != nil {
 		profile.Focuses = *req.Focuses
+	}
+	if req.Age != nil {
+		profile.Age = *req.Age
+	}
+	if req.Country != nil {
+		profile.Country = strings.TrimSpace(*req.Country)
+	}
+	if req.Gender != nil {
+		profile.Gender = *req.Gender
 	}
 
 	if err := h.db.WithContext(c.Request.Context()).Save(&profile).Error; err != nil {

@@ -28,7 +28,8 @@ export function useAuth() {
   const actions = useMemo(
     () => ({
       login: (params: { email: string; password: string }) => dispatch(loginThunk(params)).unwrap(),
-      signup: (params: { name: string; email: string; password: string }) => dispatch(signupThunk(params)).unwrap(),
+      signup: (params: { name: string; email: string; password: string; age: number; country: string; gender: "male" | "female" }) =>
+        dispatch(signupThunk(params)).unwrap(),
       logout: () => {
         void dispatch(logoutThunk());
         dispatch(clearDashboard());

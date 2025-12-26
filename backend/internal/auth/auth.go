@@ -16,7 +16,7 @@ import (
 )
 
 type Service struct {
-	cfg config.Config
+	cfg            config.Config
 	flashcardSeeds []model.FlashcardTemplate
 }
 
@@ -30,7 +30,7 @@ type claims struct {
 	jwt.RegisteredClaims
 }
 
-func (s *Service) SignUp(ctx context.Context, db *gorm.DB, email, password, name string) (*model.User, string, error) {
+func (s *Service) SignUp(ctx context.Context, db *gorm.DB, email, password, name string, age int, country, gender string) (*model.User, string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, "", err
@@ -44,6 +44,9 @@ func (s *Service) SignUp(ctx context.Context, db *gorm.DB, email, password, name
 		Name:    name,
 		Track:   model.TrackBeginner,
 		Focuses: []string{"reading", "listening"},
+		Age:     age,
+		Country: country,
+		Gender:  gender,
 	}
 
 	err = db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {

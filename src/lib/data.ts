@@ -6,7 +6,10 @@ export const defaultProfile: Profile = {
   targetMinutes: 20,
   focuses: ["reading", "listening"],
   streakDays: 3,
-  xp: 120
+  xp: 120,
+  age: 18,
+  country: "Indonesia",
+  gender: "male"
 };
 
 export const tracks: LearningTrack[] = [

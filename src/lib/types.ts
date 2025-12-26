@@ -9,6 +9,9 @@ export interface Profile {
   focuses: SkillFocus[];
   streakDays: number;
   xp: number;
+  age: number;
+  country: string;
+  gender: "male" | "female";
 }
 
 export interface Lesson {

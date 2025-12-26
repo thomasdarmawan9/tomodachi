@@ -28,6 +28,9 @@ type MeResponse = {
   userId: string;
   user?: { id: string; email: string };
   name: string;
+  age: number;
+  country: string;
+  gender: "male" | "female";
   track: Profile["track"];
   targetMinutes: number;
   focuses: Profile["focuses"];
@@ -48,6 +51,9 @@ const initialState: AuthState = {
 function normalizeProfile(data: MeResponse): Profile & { onboardingComplete?: boolean } {
   return {
     name: data.name,
+    age: data.age,
+    country: data.country,
+    gender: data.gender,
     track: data.track,
     targetMinutes: data.targetMinutes,
     focuses: data.focuses,
@@ -110,13 +116,13 @@ export const loginThunk = createAsyncThunk<
 
 export const signupThunk = createAsyncThunk<
   { token: string; user: AuthUser; profile: AuthProfile },
-  { name: string; email: string; password: string },
+  { name: string; email: string; password: string; age: number; country: string; gender: "male" | "female" },
   { rejectValue: string }
->("auth/signup", async ({ name, email, password }, { dispatch, rejectWithValue }) => {
+>("auth/signup", async ({ name, email, password, age, country, gender }, { dispatch, rejectWithValue }) => {
   try {
     const resp = await apiFetch<{ token: string; user: AuthUser }>("/auth/signup", {
       method: "POST",
-      body: { name, email, password }
+      body: { name, email, password, age, country, gender }
     });
     const { profile } = await fetchMe(resp.token);
     if (typeof window !== "undefined") localStorage.setItem(TOKEN_KEY, resp.token);

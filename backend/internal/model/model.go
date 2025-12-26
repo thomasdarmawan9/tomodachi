@@ -43,6 +43,9 @@ type Profile struct {
 	Focuses            pq.StringArray `gorm:"type:text[]" json:"focuses"`
 	StreakDays         int            `json:"streakDays"`
 	XP                 int            `json:"xp"`
+	Age                int            `json:"age"`
+	Country            string         `json:"country"`
+	Gender             string         `json:"gender"`
 	ReviewedToday      int            `json:"reviewedToday"`
 	ReviewedTodayDate  time.Time      `json:"reviewedTodayDate"`
 	OnboardingComplete bool           `json:"onboardingComplete"`
@@ -52,13 +55,13 @@ type Profile struct {
 }
 
 type Track struct {
-	ID          TrackKey        `gorm:"primaryKey" json:"id"`
-	Title       string          `json:"title"`
-	Description string          `json:"description"`
-	Units       []Unit          `json:"units,omitempty"`
-	CreatedAt   time.Time       `json:"createdAt"`
-	UpdatedAt   time.Time       `json:"updatedAt"`
-	DeletedAt   gorm.DeletedAt  `gorm:"index" json:"-"`
+	ID          TrackKey       `gorm:"primaryKey" json:"id"`
+	Title       string         `json:"title"`
+	Description string         `json:"description"`
+	Units       []Unit         `json:"units,omitempty"`
+	CreatedAt   time.Time      `json:"createdAt"`
+	UpdatedAt   time.Time      `json:"updatedAt"`
+	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 type UnitStatus string
@@ -82,17 +85,17 @@ type Unit struct {
 }
 
 type Lesson struct {
-	ID              string         `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	UnitID          string         `json:"unitId"`
-	Title           string         `json:"title"`
-	Summary         string         `json:"summary"`
-	Level           TrackKey       `json:"level"`
-	SkillTags       pq.StringArray `gorm:"type:text[]" json:"skillTags"`
-	EstimatedMinutes int           `json:"estimatedMinutes"`
-	AudioHint       string         `json:"audioHint"`
-	CreatedAt       time.Time      `json:"createdAt"`
-	UpdatedAt       time.Time      `json:"updatedAt"`
-	DeletedAt       gorm.DeletedAt `gorm:"index" json:"-"`
+	ID               string         `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	UnitID           string         `json:"unitId"`
+	Title            string         `json:"title"`
+	Summary          string         `json:"summary"`
+	Level            TrackKey       `json:"level"`
+	SkillTags        pq.StringArray `gorm:"type:text[]" json:"skillTags"`
+	EstimatedMinutes int            `json:"estimatedMinutes"`
+	AudioHint        string         `json:"audioHint"`
+	CreatedAt        time.Time      `json:"createdAt"`
+	UpdatedAt        time.Time      `json:"updatedAt"`
+	DeletedAt        gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 type UserUnit struct {
@@ -108,12 +111,12 @@ type UserUnit struct {
 type QuestionType string
 
 const (
-	QMatching QuestionType = "matching"
-	QTyping   QuestionType = "typing"
-	QOrdering QuestionType = "ordering"
-	QReading  QuestionType = "reading"
+	QMatching  QuestionType = "matching"
+	QTyping    QuestionType = "typing"
+	QOrdering  QuestionType = "ordering"
+	QReading   QuestionType = "reading"
 	QListening QuestionType = "listening"
-	QKanji    QuestionType = "kanji"
+	QKanji     QuestionType = "kanji"
 )
 
 type Question struct {
@@ -170,24 +173,24 @@ const (
 )
 
 type ReviewLog struct {
-	ID        string        `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	UserID    string        `gorm:"index" json:"userId"`
-	CardID    string        `gorm:"index" json:"cardId"`
-	Quality   GradeQuality  `json:"quality"`
-	PrevDue   int64         `json:"prevDue"`
-	NextDue   int64         `json:"nextDue"`
-	CreatedAt time.Time     `json:"createdAt"`
+	ID        string       `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	UserID    string       `gorm:"index" json:"userId"`
+	CardID    string       `gorm:"index" json:"cardId"`
+	Quality   GradeQuality `json:"quality"`
+	PrevDue   int64        `json:"prevDue"`
+	NextDue   int64        `json:"nextDue"`
+	CreatedAt time.Time    `json:"createdAt"`
 }
 
 type PracticeAttempt struct {
-	ID        string         `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	UserID    string         `gorm:"index" json:"userId"`
-	Track     TrackKey       `json:"track"`
-	Mode      string         `json:"mode"`
-	Score     int            `json:"score"`
-	Total     int            `json:"total"`
-	Passed    bool           `json:"passed"`
-	CreatedAt time.Time      `json:"createdAt"`
+	ID        string    `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	UserID    string    `gorm:"index" json:"userId"`
+	Track     TrackKey  `json:"track"`
+	Mode      string    `json:"mode"`
+	Score     int       `json:"score"`
+	Total     int       `json:"total"`
+	Passed    bool      `json:"passed"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type PracticeAnswer struct {
